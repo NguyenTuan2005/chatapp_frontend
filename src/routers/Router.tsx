@@ -1,6 +1,7 @@
-import {createBrowserRouter} from 'react-router';
+import {createBrowserRouter, Outlet} from 'react-router';
 import NotFound from "../components/common/NotFound.tsx";
 import Login from "../pages/Login.tsx";
+import MainLayout from "../layouts/MainLayout.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -9,10 +10,21 @@ export const router = createBrowserRouter([
                 path: "*",
                 element: <NotFound/>
             },
+        ]
+    },
+    {
+        element: <ProtectedRoute/>,
+        children: [
             {
-                path: "/login",
-                element: <Login/>
+                element: <MainLayout/>,
+                children: [
+                    { path: "/login", element: <Login/> }
+                ]
             }
         ]
     }
 ])
+
+function ProtectedRoute() {
+    return <Outlet/>
+}
