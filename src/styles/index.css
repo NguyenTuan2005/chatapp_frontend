@@ -1,0 +1,253 @@
+:root {
+    --text: #344E41;
+    --text-h: #20372D;
+    --border: #D5DED5;
+
+    --shadow:
+            rgba(40, 60, 45, 0.08) 0 10px 15px -3px,
+            rgba(40, 60, 45, 0.04) 0 4px 6px -2px;
+
+    --bg: #fbfbfa;
+    --bg-second: #E6EDE7;
+
+    --bs-primary: #52796F;
+    --bs-primary-100: #42685E;
+    --bs-primary-200: #35564D;
+    --bs-primary-alpha-15: rgba(82, 121, 111, 0.15);
+
+    --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+    --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+    --mono: ui-monospace, Consolas, monospace;
+
+    font: 18px/145% var(--sans);
+    color: var(--text);
+    background: var(--bg);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #DCE8DF;
+        --text-h: #F0F5F0;
+        --border: #405449;
+
+        --bg: #17231F;
+        --bg-second: #293B33;
+
+        --bs-primary: #80A995;
+        --bs-primary-100: #6F9983;
+        --bs-primary-200: #5E866F;
+        --bs-primary-alpha-15: rgba(128, 169, 149, 0.15);
+
+        --shadow:
+                rgba(0, 0, 0, 0.4) 0 10px 15px -3px,
+                rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    }
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    color: var(--text);
+    background-color: var(--bg);
+    font-family: var(--sans), sans-serif;
+}
+
+a {
+    color: var(--bs-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--bs-primary-100);
+}
+
+.bg-light {
+    background-color: var(--bg) !important;
+}
+
+.bg-second-light {
+    background-color: var(--bg-second) !important;
+}
+
+.form-control,
+.form-select {
+    color: var(--text);
+    border-color: var(--border);
+    background-color: var(--bg-second) !important;
+}
+
+.form-control::placeholder {
+    color: var(--text);
+    opacity: 0.55;
+}
+
+.form-control:focus,
+.form-select:focus {
+    color: var(--text);
+    border-color: var(--bs-primary);
+    background-color: var(--bg-second) !important;
+    box-shadow: 0 0 0 0.2rem var(--bs-primary-alpha-15);
+}
+
+.form-check-input {
+    background-color: var(--bg-second);
+    border-color: var(--border);
+}
+
+.form-check-input:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.form-check-input:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem var(--bs-primary-alpha-15);
+}
+
+.btn:hover {
+    color: var(--text-h);
+}
+
+.btn:disabled {
+    color: var(--text);
+}
+
+:not(.btn-check) + .btn:active {
+    color: var(--text-h);
+}
+
+.btn-link {
+    --bs-btn-font-weight: 400;
+    --bs-btn-color: var(--bs-primary);
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-color: var(--bs-primary-100);
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-color: var(--bs-primary-100);
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-disabled-color: #9ca3af;
+    --bs-btn-disabled-border-color: transparent;
+    --bs-btn-box-shadow: 0 0 0 #000;
+    --bs-btn-focus-shadow-rgb: 82, 121, 111;
+
+    text-decoration: underline;
+}
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--bs-primary-100);
+    --bs-btn-hover-border-color: var(--bs-primary-200);
+    --bs-btn-focus-shadow-rgb: 82, 121, 111;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--bs-primary-100);
+    --bs-btn-active-border-color: var(--bs-primary-200);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--bs-primary);
+    --bs-btn-disabled-border-color: var(--bs-primary);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--bs-primary-100);
+    --bs-btn-hover-border-color: var(--bs-primary-200);
+    --bs-btn-focus-shadow-rgb: 82, 121, 111;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--bs-primary-100);
+    --bs-btn-active-border-color: var(--bs-primary-200);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: var(--bs-primary-alpha-15);
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: var(--bs-primary-alpha-15);
+    --bs-gradient: none;
+}
+
+.nav-pills .nav-link.active {
+    color: var(--bs-primary);
+    background-color: var(--bg-second);
+}
+
+.nav-pills .nav-link {
+    color: var(--text);
+    background-color: var(--bg);
+}
+
+.nav .nav-link {
+    color: var(--text-h);
+    background-color: var(--bg);
+}
+
+.dropdown-menu {
+    --bs-dropdown-bg: var(--bg);
+    --bs-dropdown-color: var(--text);
+    --bs-dropdown-link-color: var(--text);
+    --bs-dropdown-link-hover-color: var(--text-h);
+    --bs-dropdown-link-hover-bg: var(--bg-second);
+    --bs-dropdown-link-active-color: var(--text-h);
+    --bs-dropdown-link-active-bg: var(--bg-second);
+
+    box-shadow: var(--shadow);
+    border-color: var(--border);
+}
+
+.dropdown-item:active {
+    color: var(--text-h);
+    background-color: var(--bg-second) !important;
+}
+
+.dropdown-item:focus,
+.dropdown-item:hover {
+    color: var(--text-h);
+    background-color: var(--bg-second) !important;
+}
+
+.breadcrumb {
+    --bs-breadcrumb-margin-bottom: 0;
+    --bs-breadcrumb-divider-color: var(--text);
+    --bs-breadcrumb-item-active-color: var(--text-h);
+}
+
+.text-primary {
+    color: var(--bs-primary) !important;
+}
+
+.border-primary {
+    border-color: var(--bs-primary) !important;
+}
+
+.accordion {
+    --bs-accordion-color: var(--text);
+    --bs-accordion-bg: var(--bg);
+    --bs-accordion-border-color: var(--border);
+    --bs-accordion-btn-color: var(--text-h);
+    --bs-accordion-btn-bg: var(--bg);
+    --bs-accordion-active-color: var(--bs-primary);
+    --bs-accordion-active-bg: var(--bs-primary-alpha-15);
+    --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem var(--bs-primary-alpha-15);
+}
+
+.list-group-item {
+    color: var(--text);
+    background-color: var(--bg);
+    border-color: var(--border);
+}
+
+.list-group-item.active {
+    z-index: 2;
+    color: var(--bs-primary);
+    background-color: var(--bs-primary-alpha-15);
+    border-color: var(--bs-primary-200);
+}
+
+.bg-primary {
+    background-color: var(--bs-primary) !important;
+}
