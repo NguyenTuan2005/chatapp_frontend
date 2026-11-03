@@ -1,30 +1,19 @@
-import { createRoomThunk } from "../thunks/RoomManagementThunk";
+import {DisplayMembersRoom} from "../components/DisplayMembersRoom.tsx";
+import {RoomMemberList} from "../components/RoomMemberList.tsx";
 
-import { useEffect } from "react";
-import {useAppDispatch} from "../store/Store.ts";
+import {RoomHeader} from "../components/RoomHeader.tsx";
+import {DefaultNoneChatCarousel} from "../components/DefaultNoneChatCarousel.tsx";
 
 function Hehe() {
-    const dispatch = useAppDispatch();
-
-    const handleCreateRoom = async () => {
-        try {
-            const room = await dispatch(
-                createRoomThunk("Room ABC")
-            ).unwrap();
-
-            console.log("Created room:", room);
-        } catch (error) {
-            console.error("Create room failed:", error);
-        }
-    };
 
 
-    useEffect(() => {
-
-        handleCreateRoom();
-    }, [dispatch]);
-
-    return <div>demo</div>;
+    return <div>demo
+        <DisplayMembersRoom></DisplayMembersRoom>
+        <RoomMemberList></RoomMemberList>
+        {/*<GroupInfoSidebar></GroupInfoSidebar>*/}
+        <RoomHeader/>
+        <DefaultNoneChatCarousel/>
+    </div>;
 }
 
 export default Hehe;
