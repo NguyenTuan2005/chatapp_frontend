@@ -23,10 +23,11 @@ export enum WS_EVENTS {
 export enum ResponseStatus {
     SUCCESS = 'success',
     ERROR = 'error',
-    PENDING = 'pending',
 }
 
 export const ACTION_ON_CHAT = "onchat";
+
+export const KEY = "RE_LOGIN_CODE";
 
 // @ts-ignore
 export const WS_DESTINATIONS = {

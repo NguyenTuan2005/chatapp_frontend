@@ -1,7 +1,9 @@
-import {createBrowserRouter, Outlet} from 'react-router';
+import {createBrowserRouter, Navigate, Outlet} from 'react-router';
 import NotFound from "../components/common/NotFound.tsx";
 import Login from "../pages/Login.tsx";
 import MainLayout from "../layouts/MainLayout.tsx";
+import Home from "../pages/Home.tsx";
+import {useAppSelector} from "../store/Store.ts";
 
 export const router = createBrowserRouter([
     {
@@ -10,6 +12,7 @@ export const router = createBrowserRouter([
                 path: "*",
                 element: <NotFound/>
             },
+            { path: "/login", element: <Login/> }
         ]
     },
     {
@@ -18,7 +21,7 @@ export const router = createBrowserRouter([
             {
                 element: <MainLayout/>,
                 children: [
-                    { path: "/login", element: <Login/> }
+                    { path: "/home", element: <Home/>}
                 ]
             }
         ]
@@ -26,5 +29,6 @@ export const router = createBrowserRouter([
 ])
 
 function ProtectedRoute() {
-    return <Outlet/>
+    const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
+    return isAuthenticated ? <Outlet/> : <Navigate to="/login" replace/>
 }
