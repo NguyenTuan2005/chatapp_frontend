@@ -1,5 +1,17 @@
 import {WS_EVENTS} from "../config/WSEventsEnum.ts";
 
+
+export interface Room {
+    name: string;
+    user: {
+        id: string;
+        name: string;
+    }[];
+    chatMess: [];
+}
+
+
+
 export interface CreateRoomRequest{
     event: WS_EVENTS.CREATE_ROOM,
     data: {

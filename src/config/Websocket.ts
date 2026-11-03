@@ -1,86 +1,53 @@
-
-import {Client, type IMessage, type StompSubscription} from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
-
-const WS_URL = import.meta.env.VITE_CHAT_WS_URL;
+import type { WebSocketData } from "../types/WebSocketData";
 
 class WebSocketService {
-    private client: Client | null = null;
+    private socket: WebSocket | null = null;
 
-    connect(
-        onConnected?: () => void,
-        onError?: (error: unknown) => void
-    ) {
-        if (this.client?.active) return;
-
-        this.client = new Client({
-            webSocketFactory: () => new SockJS(WS_URL),
-
-            reconnectDelay: 5000,
-            heartbeatIncoming: 10000,
-            heartbeatOutgoing: 10000,
-
-            onConnect: () => {
-                console.log('WebSocket connected');
-                onConnected?.();
-            },
-
-            onDisconnect: () => {
-                console.log('WebSocket disconnected');
-            },
-
-            onStompError: (frame) => {
-                console.error('STOMP error:', frame.headers['message']);
-                onError?.(frame);
-            },
-
-            onWebSocketError: (error) => {
-                console.error('WebSocket error:', error);
-                onError?.(error);
-            },
-
-            debug: (message) => console.log('STOMP:', message),
-        });
-
-        this.client.activate();
-    }
-
-    subscribe(
-        destination: string,
-        callback: (message: IMessage) => void
-    ): StompSubscription | null {
-        if (!this.client?.connected) {
-            console.warn('WebSocket is not connected');
-            return null;
-        }
-
-        return this.client.subscribe(destination, callback);
-    }
-
-    send(destination: string, body: unknown) {
-        if (!this.client?.connected) {
-            console.warn('WebSocket is not connected');
+    connect() {
+        if (
+            this.socket?.readyState === WebSocket.OPEN ||
+            this.socket?.readyState === WebSocket.CONNECTING
+        ) {
             return;
         }
 
-        this.client.publish({
-            destination,
-            body: JSON.stringify(body),
-        });
+        this.socket = new WebSocket(
+            import.meta.env.VITE_CHAT_WS_URL
+        );
+
+        this.socket.onopen = () => {
+            console.log("WebSocket connected");
+        };
+
+        this.socket.onmessage = (event) => {
+            console.log("Server response:", JSON.parse(event.data));
+        };
+
+        this.socket.onerror = (error) => {
+            console.error("WebSocket error:", error);
+        };
+
+        this.socket.onclose = () => {
+            console.log("WebSocket disconnected");
+        };
+    }
+
+    send<T>(request: WebSocketData<T>) {
+        if (this.socket?.readyState !== WebSocket.OPEN) {
+            throw new Error("WebSocket is not connected");
+        }
+
+        this.socket.send(JSON.stringify(request));
     }
 
     disconnect() {
-        if (this.client) {
-            void this.client.deactivate();
-            this.client = null;
-        }
+        this.socket?.close();
+        this.socket = null;
     }
 
-    isConnected(): boolean {
-        return this.client?.connected ?? false;
+    isConnected() {
+        return this.socket?.readyState === WebSocket.OPEN;
     }
 }
 
-const websocketService = new WebSocketService();
-
-export default websocketService;
+export const websocketService = new WebSocketService();

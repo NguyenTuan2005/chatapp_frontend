@@ -19,4 +19,17 @@ export enum WS_EVENTS {
 
     SEND_CHAT = 'SEND_CHAT',
 }
+// @ts-ignore
+export enum ResponseStatus {
+    SUCCESS = 'success',
+    ERROR = 'error',
+    PENDING = 'pending',
+}
 
+export const ACTION_ON_CHAT = "onchat";
+
+// @ts-ignore
+export const WS_DESTINATIONS = {
+    CREATE_ROOM: "/app/chat.createRoom",
+    ROOM_RESPONSE: "/topic/messages",
+}
