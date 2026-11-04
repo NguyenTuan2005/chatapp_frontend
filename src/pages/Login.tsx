@@ -17,13 +17,12 @@ function Login() {
     const [pass, setPass] = useState("");
     const [showPass, setShowPass] = useState(false);
     const error = useAppSelector(state => state.auth.error);
-    const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(loginThunk({ user, pass }));
-        if (isAuthenticated) {
+        const result = await dispatch(loginThunk({ user, pass }));
+        if (loginThunk.fulfilled.match(result)) {
             navigate("/home");
         }
     };
