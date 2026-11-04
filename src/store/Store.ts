@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import roomManagementSliceReducer from "./slice/RoomManagementSlice.ts";
+// import roomManagementSliceReducer from "./slice/RoomManagementSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
+import authSlice from "./slice/AuthSlice.ts";
 
 
 export const store = configureStore({
     reducer: {
-        roomManagement: roomManagementSliceReducer,
+        // roomManagement: roomManagementSliceReducer,
+        auth: authSlice,
     },
 });
 
