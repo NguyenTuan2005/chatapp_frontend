@@ -2,7 +2,8 @@ import {createBrowserRouter, Navigate, Outlet} from 'react-router';
 import NotFound from "../components/common/NotFound.tsx";
 import Login from "../pages/Login.tsx";
 import MainLayout from "../layouts/MainLayout.tsx";
-import Home from "../pages/Home.tsx";
+import {RoomConversation} from "../components/RoomConversation.tsx";
+
 import {useAppSelector} from "../store/Store.ts";
 
 export const router = createBrowserRouter([
@@ -21,7 +22,8 @@ export const router = createBrowserRouter([
             {
                 element: <MainLayout/>,
                 children: [
-                    { path: "/home", element: <Home/>}
+                    { path: "/home", element: <RoomConversation/>}
+
                 ]
             }
         ]
