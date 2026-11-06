@@ -5,6 +5,7 @@ import MainLayout from "../layouts/MainLayout.tsx";
 import {RoomConversation} from "../components/RoomConversation.tsx";
 
 import {useAppSelector} from "../store/Store.ts";
+import ChatPage from "../pages/ChatPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -13,7 +14,8 @@ export const router = createBrowserRouter([
                 path: "*",
                 element: <NotFound/>
             },
-            { path: "/login", element: <Login/> }
+            {path: "/login", element: <Login/>},
+            {path: "/chat/:username", element: <ChatPage/>}
         ]
     },
     {
@@ -22,8 +24,8 @@ export const router = createBrowserRouter([
             {
                 element: <MainLayout/>,
                 children: [
-                    { path: "/home", element: <RoomConversation/>}
-
+                    {path: "/home", element: <RoomConversation/>},
+                    // {path: "/chat/:username", element: <ChatPage/>}
                 ]
             }
         ]
