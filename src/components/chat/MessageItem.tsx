@@ -1,10 +1,4 @@
-export interface ChatMessage {
-    id: number;
-    name: string;
-    mes: string;
-    createAt: string;
-    isMine: boolean;
-}
+import type {ChatMessage} from "../../types/Chat.ts";
 
 interface Props {
     message: ChatMessage;

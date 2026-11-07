@@ -1,8 +1,9 @@
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList.tsx";
 import MessageInput from "./MessageInput.tsx";
-import type {ChatMessage} from "./MessageItem.tsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import type {ChatMessage} from "../../types/Chat.ts";
+import {ChatService} from "../../wsservices/ChatService.ts";
 
 const MOCK_MESSAGES: ChatMessage[] = [
     {
@@ -13,16 +14,9 @@ const MOCK_MESSAGES: ChatMessage[] = [
         isMine: false,
     },
     {
-        id: 1,
-        name: "ti",
-        mes: "Chan bố mayf đê?",
-        createAt: "09:30",
-        isMine: false,
-    },
-    {
         id: 2,
         name: "long",
-        mes: "Mình đang xây dựng một ứng dụng chat bằng React và Spring Boot.",
+        mes: "Mình đang xây dựng một ứng dụng chat bằng React ",
         createAt: "09:31",
         isMine: true,
     },
@@ -45,6 +39,21 @@ const MOCK_MESSAGES: ChatMessage[] = [
 
 const ChatConversation = () => {
     const [messages, setMessages] = useState<ChatMessage[]>(MOCK_MESSAGES);
+
+    useEffect(() => {
+        const loadMessages = async () => {
+            try {
+                const messages = await ChatService.getPeopleMessages("ti", 1);
+
+                console.log("Chat messages:", messages);
+
+            } catch (error) {
+                console.error("Cannot load chat messages:", error);
+            }
+        };
+
+        loadMessages();
+    }, []);
 
     const handleSendMessage = (content: string) => {
         const newMessage: ChatMessage = {
