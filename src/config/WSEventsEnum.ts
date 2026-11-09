@@ -28,6 +28,7 @@ export enum ResponseStatus {
 export const ACTION_ON_CHAT = "onchat";
 
 export const KEY = "RE_LOGIN_CODE";
+export const USER_KEY = "USER";
 
 // @ts-ignore
 export const WS_DESTINATIONS = {

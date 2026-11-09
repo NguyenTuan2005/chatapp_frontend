@@ -1,28 +1,123 @@
-import React from 'react';
+import { useEffect } from "react";
+import { Alert, ListGroup, Badge, Placeholder } from "react-bootstrap";
+import {
+    ExclamationCircleFill,
+    PeopleFill,
+    PersonCircle,
+    ChatDots,
+} from "react-bootstrap-icons";
+import { useAppDispatch, useAppSelector } from "../../store/Store.ts";
+import { getUserListThunk } from "../../thunks/SidebarThunk.ts";
 
-export const Sidebar: React.FC = () => {
-    return (
-        <div className="w-16 bg-[#0068ff] flex flex-col items-center py-4 justify-between text-white select-none">
-            <div className="flex flex-col items-center gap-6">
-                <img
-                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=MyProfile"
-                    alt="Avatar"
-                    className="w-10 h-10 rounded-full cursor-pointer hover:opacity-90 transition border-2 border-white"
-                />
-                <nav className="flex flex-col gap-4">
-                    <button className="p-2.5 rounded-xl bg-white/20 hover:bg-white/30 transition" title="Tin nhắn">
-
-                    </button>
-                    <button className="p-2.5 rounded-xl hover:bg-white/10 transition" title="Danh bạ">
-
-                    </button>
-                </nav>
-            </div>
-            <div className="flex flex-col gap-4">
-                <button className="p-2.5 rounded-xl hover:bg-white/10 transition" title="Cài đặt">
-
-                </button>
-            </div>
-        </div>
-    );
+const formatTime = (value: string) => {
+    const d = new Date(value.replace(" ", "T"));
+    return d.toDateString() === new Date().toDateString()
+        ? d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
+        : d.toLocaleDateString("vi-VN");
 };
+
+const SkeletonItem = () => (
+    <ListGroup.Item className="d-flex align-items-center py-3">
+        <Placeholder animation="glow" className="me-3">
+            <Placeholder className="rounded-circle d-block" style={{ width: 44, height: 44 }} />
+        </Placeholder>
+        <Placeholder animation="glow" className="flex-grow-1">
+            <Placeholder xs={7} className="d-block mb-2" />
+            <Placeholder xs={3} />
+        </Placeholder>
+    </ListGroup.Item>
+);
+
+function Sidebar() {
+    const dispatch = useAppDispatch();
+    const users = useAppSelector((state) => state.siderbar.users);
+    const error = useAppSelector((state) => state.siderbar.error);
+    const loading = useAppSelector((state) => state.siderbar.loading);
+
+    useEffect(() => {
+        dispatch(getUserListThunk());
+    }, [dispatch]);
+
+    if (error) {
+        return (
+            <Alert variant="danger" className="m-2 py-2 d-flex align-items-center">
+                <ExclamationCircleFill className="me-2 flex-shrink-0" />
+                {error}
+            </Alert>
+        );
+    }
+
+    const sorted = [...users].sort((a, b) => b.actionTime.localeCompare(a.actionTime));
+
+    return (
+        <aside
+            className="d-flex flex-column border-end bg-body h-100"
+            style={{ width: 300, minWidth: 300 }}
+        >
+            <header className="d-flex align-items-center px-3 py-3 border-bottom">
+                <ChatDots size={22} className="text-primary me-2" />
+                <h5 className="mb-0 fw-semibold">Cuộc trò chuyện</h5>
+            </header>
+
+            <div className="flex-grow-1 overflow-auto">
+                {loading ? (
+                    <ListGroup variant="flush">
+                        {Array.from({ length: 6 }, (_, i) => (
+                            <SkeletonItem key={i} />
+                        ))}
+                    </ListGroup>
+                ) : sorted.length === 0 ? (
+                    <p className="text-muted text-center small mt-4 px-3">
+                        Chưa có cuộc trò chuyện nào hết, hãy tạo phòng hoặc tạo cuộc trò chuyện
+                    </p>
+                ) : (
+                    <ListGroup variant="flush">
+                        {sorted.map((item) => {
+                            const isRoom = item.type === 1;
+                            const Icon = isRoom ? PeopleFill : PersonCircle;
+
+                            return (
+                                <ListGroup.Item
+                                    key={`${item.type}-${item.name}`}
+                                    action
+                                    className="d-flex align-items-center py-3"
+                                >
+                                    <div
+                                        className={`rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0 ${
+                                            isRoom
+                                                ? "bg-primary-subtle text-primary"
+                                                : "bg-success-subtle text-success"
+                                        }`}
+                                        style={{ width: 44, height: 44 }}
+                                    >
+                                        <Icon size={22} />
+                                    </div>
+
+                                    <div className="flex-grow-1 overflow-hidden">
+                                        <div className="d-flex justify-content-between align-items-baseline">
+                                            <span className="fw-semibold text-truncate">
+                                                {item.name}
+                                            </span>
+                                            <small className="text-muted ms-2 flex-shrink-0">
+                                                {formatTime(item.actionTime)}
+                                            </small>
+                                        </div>
+                                        <Badge
+                                            bg={isRoom ? "primary" : "success"}
+                                            pill
+                                            className="fw-normal"
+                                        >
+                                            {isRoom ? "Phòng" : ""}
+                                        </Badge>
+                                    </div>
+                                </ListGroup.Item>
+                            );
+                        })}
+                    </ListGroup>
+                )}
+            </div>
+        </aside>
+    );
+}
+
+export default Sidebar;
