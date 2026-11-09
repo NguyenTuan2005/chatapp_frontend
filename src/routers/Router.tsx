@@ -5,6 +5,7 @@ import MainLayout from "../layouts/MainLayout.tsx";
 import {RoomConversation} from "../components/room/RoomConversation.tsx";
 
 import {useAppSelector} from "../store/Store.ts";
+import Hehe from "../pages/Test.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -13,7 +14,8 @@ export const router = createBrowserRouter([
                 path: "*",
                 element: <NotFound/>
             },
-            { path: "/login", element: <Login/> }
+            { path: "/login", element: <Login/> },
+            {path: "/hehe", element: <Hehe/>}
         ]
     },
     {

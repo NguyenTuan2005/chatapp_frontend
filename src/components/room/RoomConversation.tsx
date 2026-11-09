@@ -3,19 +3,15 @@
 
 import {RoomInfoSidebar} from "./RoomInfoSidebar.tsx";
 import {RoomHeader} from "./RoomHeader.tsx";
-import {useState} from "react";
 
 export function RoomConversation() {
-
-    // const [showSidebar, setShowSidebar] = useState(true);
-    const [expanded, setExpanded] = useState(false);
     return (
         <div className="d-flex w-100 vh-100 overflow-hidden bg-light">
 
             <div className="d-flex flex-column flex-grow-1 h-100 border-end overflow-hidden">
 
                 <div className="flex-shrink-0 bg-white border-bottom">
-                    <RoomHeader isExpanded={expanded} onToggle={() => setExpanded((v) => !v)} />
+                    <RoomHeader />
                 </div>
 
                 {/* MOCK data */}
