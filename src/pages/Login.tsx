@@ -1,4 +1,4 @@
-import {Card, Col, Container, InputGroup, Row, Form, Button, Alert} from "react-bootstrap";
+import {Card, Col, Container, InputGroup, Row, Form, Button, Alert, Spinner} from "react-bootstrap";
 import {
     BoxArrowInRight,
     ChatDotsFill,
@@ -17,13 +17,14 @@ function Login() {
     const [pass, setPass] = useState("");
     const [showPass, setShowPass] = useState(false);
     const error = useAppSelector(state => state.auth.error);
+    const loading = useAppSelector(state => state.auth.loading);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const result = await dispatch(loginThunk({ user, pass }));
         if (loginThunk.fulfilled.match(result)) {
-            navigate("/home");
+            navigate("/");
         }
     };
 
@@ -39,7 +40,7 @@ function Login() {
                             <div className="text-center mb-4">
                                 <ChatDotsFill size={48} className="text-primary mb-2" />
                                 <h3 className="fw-bold mb-1">HTJ App Chat</h3>
-                                <p className="text-muted mb-0">Sign in to continue</p>
+                                <p className="text-muted mb-0">Đăng nhập để tiếp tục</p>
                             </div>
 
                             <Form onSubmit={handleSubmit}>
@@ -85,9 +86,18 @@ function Login() {
                                     </Alert>
                                 }
 
-                                <Button variant="primary" type="submit" className="w-100 py-2">
-                                    <BoxArrowInRight className="me-2" />
-                                    Login
+                                <Button variant="primary" type="submit" className="w-100 py-2" disabled={loading}>
+                                    {loading ? (
+                                        <>
+                                            <Spinner animation="border" size="sm" className="me-2" />
+                                            Đang đăng nhập...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <BoxArrowInRight className="me-2" />
+                                            Đăng nhập
+                                        </>
+                                    )}
                                 </Button>
                             </Form>
                         </Card.Body>

@@ -1,5 +1,5 @@
 import {Outlet} from "react-router";
-import {Sidebar} from "../components/common/Sidebar.tsx";
+import Sidebar from "../components/common/Sidebar.tsx";
 
 function MainLayout() {
     return (
