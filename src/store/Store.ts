@@ -2,6 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import roomManagementReducer from "./slice/RoomManagementSlice.ts";
 import { useDispatch, useSelector } from "react-redux";
 import authSlice from "./slice/AuthSlice.ts";
+import sidebarSlice from "./slice/SidebarSlice.ts";
+
 import chatInfoSidebarSlice from "./slice/ChatInfoSidebarSlice.ts";
 
 export const store = configureStore({
@@ -9,6 +11,7 @@ export const store = configureStore({
         roomManagement: roomManagementReducer,
         auth: authSlice,
         chatSidebar: chatInfoSidebarSlice,
+        siderbar: sidebarSlice,
     },
 });
 

@@ -6,6 +6,7 @@ import {RoomConversation} from "../components/room/RoomConversation.tsx";
 
 import {useAppSelector} from "../store/Store.ts";
 import Hehe from "../pages/Test.tsx";
+import AppSkeleton from "../components/common/AppSkeleton.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -14,8 +15,6 @@ export const router = createBrowserRouter([
                 path: "*",
                 element: <NotFound/>
             },
-            { path: "/login", element: <Login/> },
-            {path: "/hehe", element: <Hehe/>}
         ]
     },
     {
@@ -24,15 +23,29 @@ export const router = createBrowserRouter([
             {
                 element: <MainLayout/>,
                 children: [
-                    { path: "/home", element: <RoomConversation/>}
-
+                    { path: "/", element: <RoomConversation/>}
+                    ,{path: "/hehe", element: <Hehe/>}
                 ]
             }
+        ]
+    },
+    {
+        element: <GuestRoute/>,
+        children: [
+            { path: "/login", element: <Login/> }
         ]
     }
 ])
 
 function ProtectedRoute() {
     const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
+    const relogin = useAppSelector(state => state.auth.relogin);
+
+    if (relogin) return <AppSkeleton/>;
     return isAuthenticated ? <Outlet/> : <Navigate to="/login" replace/>
+}
+
+function GuestRoute() {
+    const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
+    return isAuthenticated ? <Navigate to="/" replace /> : <Outlet />;
 }

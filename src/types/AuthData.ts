@@ -5,3 +5,10 @@ export interface LoginRequest {
         pass: string;
     };
 }
+
+export interface ReLoginRequest {
+    data: {
+        user: string;
+        code: string;
+    }
+}
