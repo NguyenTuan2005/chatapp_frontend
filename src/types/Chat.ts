@@ -15,9 +15,9 @@ export interface Conversation {
 
 export interface ChatMessage {
     id: number;
-    name: string;
-    mes: string;
-    createAt: string;
+    sender: string;
+    content: string;
+    createdAt: Date;
     isMine: boolean;
 }
 

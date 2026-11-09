@@ -1,7 +1,10 @@
 import { useEffect, useRef } from "react";
 
-import MessageItem, {type ChatMessage} from "./MessageItem";
+
 import {MessageDateSeparator} from "./MessageSeparator.tsx";
+import type {ChatMessage} from "../../types/Chat.ts";
+import MessageItem from "./MessageItem.tsx";
+import {formatMessageDate, getChatDateKey} from "../../utils/DateUtils.ts";
 
 
 interface Props {
@@ -24,27 +27,36 @@ const MessageList = ({ messages }: Props) => {
 
                 <div className="chat-start-info text-center">
                     <div className="chat-user-avatar chat-user-avatar-large mx-auto mb-2">
-                        T
+                        H
                     </div>
 
                     <h6 className="fw-semibold mb-1">
-                        Ti Nguyễn
+                        Henry Feng 🐉
                     </h6>
 
-                    <small className="text-muted">
-                        Đây là cuộc trò chuyện giữa bạn và Ti Nguyễn.
-                    </small>
                 </div>
 
-                <MessageDateSeparator date="Hôm nay" />
-
                 <div className="d-flex flex-column gap-3">
-                    {messages.map((message) => (
-                        <MessageItem
-                            key={message.id}
-                            message={message}
-                        />
-                    ))}
+                    {messages.map((message, index) => {
+                        const previousMessage = messages[index - 1];
+
+                        const showDateSeparator =
+                            !previousMessage ||
+                            getChatDateKey(previousMessage.createdAt) !==
+                            getChatDateKey(message.createdAt);
+
+                        return (
+                            <div key={message.id}>
+                                {showDateSeparator && (
+                                    <MessageDateSeparator
+                                        date={formatMessageDate(message.createdAt)}
+                                    />
+                                )}
+
+                                <MessageItem message={message} />
+                            </div>
+                        );
+                    })}
                 </div>
 
                 <div ref={bottomRef} />

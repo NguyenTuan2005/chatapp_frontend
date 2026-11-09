@@ -1,4 +1,5 @@
 import type {ChatMessage} from "../../types/Chat.ts";
+import {formatMessageTime} from "../../utils/DateUtils.ts";
 
 interface Props {
     message: ChatMessage;
@@ -22,15 +23,13 @@ const MessageItem = ({ message }: Props) => {
             }`}>
 
                 <div className={`chat-message-bubble ${
-                    message.isMine
-                        ? "chat-message-mine"
-                        : "chat-message-theirs"
+                    message.isMine ? "chat-message-mine" : "chat-message-theirs"
                 }`}>
-                    {message.mes}
+                    {message.content}
                 </div>
 
                 <small className="chat-message-time">
-                    {message.createAt}
+                    {formatMessageTime(message.createdAt)}
                 </small>
 
             </div>

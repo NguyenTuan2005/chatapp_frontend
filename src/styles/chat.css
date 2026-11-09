@@ -171,8 +171,6 @@
     }
 }
 
-/*----*/
-
 .chat-input-area {
     flex-shrink: 0;
     background-color: var(--bg);

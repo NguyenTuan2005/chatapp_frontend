@@ -2,8 +2,9 @@ import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList.tsx";
 import MessageInput from "./MessageInput.tsx";
 import {useEffect, useState} from "react";
-import type {ChatMessage} from "../../types/Chat.ts";
+import type {ChatMessage, ChatMessageResponse} from "../../types/Chat.ts";
 import {ChatService} from "../../wsservices/ChatService.ts";
+import {parseChatDate} from "../../utils/DateUtils.ts";
 
 
 
@@ -25,15 +26,11 @@ const ChatConversation = () => {
 
 
                 const chatMessages: ChatMessage[] = response
-                    .map((message) => ({
-                        id: message.id,
-                        name: message.name,
-                        mes: message.mes,
-                        createAt: message.createAt,
-                        isMine: message.name === "hoang",
-                    }))
+                    .map(message => (
+                        mapChatMessage(message, "hoang")
+                    ))
                     .sort((a, b) =>
-                        new Date(a.createAt).getTime() - new Date(b.createAt).getTime()
+                        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
                     );
 
 
@@ -53,9 +50,9 @@ const ChatConversation = () => {
     const handleSendMessage = (content: string) => {
         const newMessage: ChatMessage = {
             id: Date.now(),
-            name: "hoang",
-            mes: content,
-            createAt: new Date().toLocaleTimeString("vi-VN", {
+            sender: "hoang",
+            content: content,
+            createdAt: new Date().toLocaleTimeString("vi-VN", {
                 hour: "2-digit",
                 minute: "2-digit",
             }),
@@ -80,3 +77,17 @@ const ChatConversation = () => {
 };
 
 export default ChatConversation;
+
+
+export function mapChatMessage(
+    message: ChatMessageResponse,
+    currentUsername: string
+): ChatMessage {
+    return {
+        id: message.id,
+        sender: message.name,
+        content: message.mes,
+        createdAt: parseChatDate(message.createAt),
+        isMine: message.name === currentUsername,
+    };
+}
