@@ -5,50 +5,45 @@ import {useEffect, useState} from "react";
 import type {ChatMessage} from "../../types/Chat.ts";
 import {ChatService} from "../../wsservices/ChatService.ts";
 
-const MOCK_MESSAGES: ChatMessage[] = [
-    {
-        id: 1,
-        name: "ti",
-        mes: "Chào bạn, bạn đang làm gì đấy?",
-        createAt: "09:30",
-        isMine: false,
-    },
-    {
-        id: 2,
-        name: "long",
-        mes: "Mình đang xây dựng một ứng dụng chat bằng React ",
-        createAt: "09:31",
-        isMine: true,
-    },
-    {
-        id: 3,
-        name: "ti",
-        mes: "Ồ, bạn sử dụng WebSocket để giao tiếp realtime à?",
-        createAt: "09:32",
-        isMine: false,
-    },
-    {
-        id: 4,
-        name: "long",
-        mes: "Đúng rồi, hiện tại mình đang hoàn thiện giao diện trước.",
-        createAt: "09:33",
-        isMine: true,
-    },
-];
 
 
 const ChatConversation = () => {
-    const [messages, setMessages] = useState<ChatMessage[]>(MOCK_MESSAGES);
+
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
 
     useEffect(() => {
+
+        console.log("1. Start loading messages");
+
         const loadMessages = async () => {
             try {
-                const messages = await ChatService.getPeopleMessages("ti", 1);
 
-                console.log("Chat messages:", messages);
+                const response = await ChatService.getPeopleMessages("henryfeng", 1);
+
+
+                console.log("2. Chat messages:", response);
+
+
+                const chatMessages: ChatMessage[] = response
+                    .map((message) => ({
+                        id: message.id,
+                        name: message.name,
+                        mes: message.mes,
+                        createAt: message.createAt,
+                        isMine: message.name === "hoang",
+                    }))
+                    .sort((a, b) =>
+                        new Date(a.createAt).getTime() - new Date(b.createAt).getTime()
+                    );
+
+
+                setMessages(chatMessages);
 
             } catch (error) {
                 console.error("Cannot load chat messages:", error);
+
+
+                console.log("3. Messages failed:", messages);
             }
         };
 
@@ -58,7 +53,7 @@ const ChatConversation = () => {
     const handleSendMessage = (content: string) => {
         const newMessage: ChatMessage = {
             id: Date.now(),
-            name: "long",
+            name: "hoang",
             mes: content,
             createAt: new Date().toLocaleTimeString("vi-VN", {
                 hour: "2-digit",
@@ -68,7 +63,6 @@ const ChatConversation = () => {
         };
 
         setMessages((prevMessages) => [...prevMessages, newMessage]);
-        // setMessages(() => [newMessage]);
     };
 
 

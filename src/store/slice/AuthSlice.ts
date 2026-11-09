@@ -9,7 +9,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-    isAuthenticated: false,
+    isAuthenticated: reLoginStorage.get() !== null, //login unlimited
     reLoginCode: reLoginStorage.get(),
     error: null,
     loading: false,

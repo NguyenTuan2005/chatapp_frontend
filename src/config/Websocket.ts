@@ -33,7 +33,9 @@ class WebSocketService {
         return new Promise((resolve, reject) => {
             this.pending.set(event, { resolve, reject });
             try {
+
                 this.send({ action: ACTION_ON_CHAT, data: { event, data } });
+
             } catch (error) {
                 this.pending.delete(event);
                 reject(error);
@@ -56,13 +58,33 @@ class WebSocketService {
     }
 
     private handleMessage(response: ServerResponse) {
+        console.log("WebSocket received:", response);
+
+        if (response.event === "AUTH") {
+            const error = new Error(response.event);
+
+            this.pending.forEach((waiting) => {
+                waiting.reject(error);
+            });
+
+            this.pending.clear();
+            return;
+        }
+
         const waiting = this.pending.get(response.event);
-        if (!waiting) return;
+
+        if (!waiting) {
+            console.log("No pending request for event:", response.event);
+            return;
+        }
 
         this.pending.delete(response.event);
 
-        if (response.status === ResponseStatus.SUCCESS) waiting.resolve(response.data);
-        else waiting.reject(new Error(response.mes));
+        if (response.status === ResponseStatus.SUCCESS) {
+            waiting.resolve(response.data);
+        } else {
+            waiting.reject(new Error(response.mes));
+        }
     }
 }
 

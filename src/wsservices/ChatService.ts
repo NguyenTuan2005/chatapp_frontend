@@ -23,15 +23,32 @@ export const ChatService = {
         page: number
     ): Promise<ChatMessageResponse[]> {
 
-        return websocketService.request<
-            ChatMessageResponse[],
-            {
-                name: string;
-                page: number;
-            }
-        >(WS_EVENTS.GET_PEOPLE_CHAT_MES, {
-            name: username,
-            page
-        });
+        try {
+            console.log("Sending GET_PEOPLE_CHAT_MES...");
+
+            const payload = {
+                name: username,
+                page
+            };
+            console.log("GET_PEOPLE_CHAT_MES payload:", payload);
+
+            const messages = await websocketService.request<
+                ChatMessageResponse[],
+                {
+                    name: string;
+                    page: number;
+                }
+            >(WS_EVENTS.GET_PEOPLE_CHAT_MES, {
+                name: username,
+                page
+            });
+
+            console.log("Received messages:", messages);
+
+            return messages;
+        } catch (error) {
+            console.error("Get messages error:", error);
+            throw error;
+        }
     }
 };
