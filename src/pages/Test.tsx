@@ -1,8 +1,8 @@
-import {DisplayMembersRoom} from "../components/DisplayMembersRoom.tsx";
-import {RoomMemberList} from "../components/RoomMemberList.tsx";
+import {DisplayMembersRoom} from "../components/room/DisplayMembersRoom.tsx";
+import {RoomMemberList} from "../components/room/RoomMemberList.tsx";
 
-import {RoomHeader} from "../components/RoomHeader.tsx";
-import {DefaultNoneChatCarousel} from "../components/DefaultNoneChatCarousel.tsx";
+import {RoomHeader} from "../components/room/RoomHeader.tsx";
+import {DefaultNoneChatCarousel} from "../components/common/DefaultNoneChatCarousel.tsx";
 
 function Hehe() {
 

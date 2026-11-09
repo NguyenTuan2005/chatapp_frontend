@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Room } from "../../types/RoomManagementData";
-import {createRoomThunk} from "../../thunks/RoomManagementThunk.ts";
+// import {createRoomThunk} from "../../thunks/RoomManagementThunk.ts";
 
 interface RoomManagementState {
     rooms: Room[];
@@ -33,33 +33,29 @@ const roomManagementSlice = createSlice({
         },
     },
 
-    extraReducers: builder => {
-        builder
-            .addCase(createRoomThunk.pending, state => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(createRoomThunk.fulfilled, (state, action) => {
-                state.loading = false;
-
-                const isExist = state.rooms.some(
-                    room => room.name === action.payload.name
-                );
-
-                if (!isExist) {
-                    state.rooms.push(action.payload);
-                }
-            })
-            .addCase(createRoomThunk.rejected, (state, action) => {
-                state.loading = false;
-                state.error =
-                    action.payload ?? "Something went wrong";
-            });
-    },
+    // extraReducers: builder => {
+    //     builder
+    //         .addCase(createRoomThunk.pending, state => {
+    //             state.loading = true;
+    //             state.error = null;
+    //         })
+    //         .addCase(createRoomThunk.fulfilled, (state, action) => {
+    //             state.loading = false;
+    //
+    //             const isExist = state.rooms.some(
+    //                 room => room.name === action.payload.name
+    //             );
+    //
+    //             if (!isExist) {
+    //                 state.rooms.push(action.payload);
+    //             }
+    //         })
+    //         .addCase(createRoomThunk.rejected, (state, action) => {
+    //             state.loading = false;
+    //             state.error =
+    //                 action.payload ?? "Something went wrong";
+    //         });
+    // },
 });
 
 export const { load, removeRoom, reset } = roomManagementSlice.actions;
-
-export default function roomManagementSliceReducer(){
-    return roomManagementSlice.reducer;
-}

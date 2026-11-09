@@ -1,6 +1,9 @@
-import { useState } from 'react';
+
 import { Image, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Users, Tag, Maximize2, Minimize2 } from 'lucide-react';
+import {useDispatch, useSelector} from "react-redux";
+import type {AppDispatch, RootState} from "../../store/Store.ts";
+import {reverse} from "../../store/slice/ChatInfoSidebarSlice.ts";
 
 const groupInfo = {
     name: 'Quán cơm Cô Hương',
@@ -10,12 +13,15 @@ const groupInfo = {
 };
 
 
-export function RoomHeader({ isExpanded: controlled, onToggle } : any) {
-    const [internal, setInternal] = useState(false);
-    const isExpanded = controlled ?? internal;
-    const handleToggle = onToggle ?? (() => setInternal((prev) => !prev));
+export function RoomHeader() {
 
-    const label = isExpanded ? 'Thu hẹp' : 'Mở rộng';
+    const dispatch = useDispatch<AppDispatch>();
+    const reverseExpandStatusOfChatSideBarOnTheRight = ()=>{
+        dispatch(reverse())
+    }
+    const  isOpen = useSelector((state: RootState) => state.chatSidebar.isOpen);
+
+    const label = isOpen ? 'Thu hẹp' : 'Mở rộng';
 
     return (
         <div className="d-flex align-items-center p-3 bg-white border-bottom">
@@ -51,7 +57,6 @@ export function RoomHeader({ isExpanded: controlled, onToggle } : any) {
                 </div>
             </div>
 
-            {/* Nút mở rộng / thu hẹp, đẩy sang phải */}
             <div className="ms-auto">
                 <OverlayTrigger
                     placement="bottom"
@@ -61,10 +66,10 @@ export function RoomHeader({ isExpanded: controlled, onToggle } : any) {
                         variant="light"
                         size="sm"
                         className="d-flex align-items-center justify-content-center border-0 rounded-circle p-2"
-                        onClick={handleToggle}
+                        onClick={reverseExpandStatusOfChatSideBarOnTheRight}
                         aria-label={label}
                     >
-                        {isExpanded ? (
+                        {isOpen ? (
                             <Minimize2 size={18} color="#0F2942" />
                         ) : (
                             <Maximize2 size={18} color="#0F2942" />

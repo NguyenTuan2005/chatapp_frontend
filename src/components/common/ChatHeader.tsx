@@ -1,5 +1,5 @@
 import React from 'react';
-import type {User} from "../types/chat.ts";
+import type {User} from "../../types/chat.ts";
 
 
 interface ChatHeaderProps {

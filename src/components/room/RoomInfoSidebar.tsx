@@ -1,17 +1,14 @@
 
-import { Button, Accordion, } from 'react-bootstrap';
-import {
-    Menu,
-} from 'lucide-react';
-import {useState} from "react";
+import {Accordion} from 'react-bootstrap';
 import {RoomInfoSidebarHeader} from "./RoomInfoSidebarHeader.tsx";
 import {AccordionManagementRoomMembers} from "./ManagementRoomMember.tsx";
 import {RoomNewsBroad} from "./RoomNewsBroad.tsx";
+import {useSelector} from "react-redux";
+import type {RootState} from "../../store/Store.ts";
 
 export function RoomInfoSidebar() {
-    const [isOpen, setIsOpen] = useState(true);
+    const  isOpen = useSelector((state: RootState) => state.chatSidebar.isOpen);
 
-    // Mock data
     const groupData = {
         name: 'DS_high cùng 3 ae siêu nhân',
         avatar: 'https://cdn-icons-png.flaticon.com/512/3135/3135515.png',
@@ -30,29 +27,12 @@ export function RoomInfoSidebar() {
     };
 
     if (!isOpen) {
-        return (
-            <Button
-                variant="light"
-                onClick={() => setIsOpen(true)}
-                className="m-2 p-2 rounded-circle shadow-sm border"
-                title="Mở thông tin nhóm"
-            >
-                <Menu size={24} color="#0F2942" />
-            </Button>
-        );
+        return (<></>);
     }
 
     return (
         <div className="bg-white border-start" style={{ width: '360px', height: '100vh', overflowY: 'auto' }}>
             <div className="d-flex align-items-center justify-content-between p-3 border-bottom">
-                <Button
-                    variant="ghost"
-                    onClick={() => setIsOpen(false)}
-                    className="p-1 border-0 bg-transparent text-dark"
-                    title="Thu nhỏ"
-                >
-                    <Menu size={22} color="#0F2942" />
-                </Button>
                 <h5 className="m-0 fw-bold text-center flex-grow-1" style={{ color: '#0F2942' }}>
                     Thông tin nhóm
                 </h5>
