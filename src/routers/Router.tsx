@@ -3,9 +3,9 @@ import NotFound from "../components/common/NotFound.tsx";
 import Login from "../pages/Login.tsx";
 import MainLayout from "../layouts/MainLayout.tsx";
 import {RoomConversation} from "../components/RoomConversation.tsx";
-
 import {useAppSelector} from "../store/Store.ts";
 import AppSkeleton from "../components/common/AppSkeleton.tsx";
+import ChatPage from "../pages/ChatPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -22,8 +22,8 @@ export const router = createBrowserRouter([
             {
                 element: <MainLayout/>,
                 children: [
-                    { path: "/", element: <RoomConversation/>}
-
+                    { path: "/", element: <RoomConversation/>},
+                    {path: "/chat/:username", element: <ChatPage/>}
                 ]
             }
         ]
