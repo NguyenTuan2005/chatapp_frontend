@@ -1,19 +1,18 @@
 
-import { Image, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import {Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Users, Tag, Maximize2, Minimize2 } from 'lucide-react';
 import {useDispatch, useSelector} from "react-redux";
 import type {AppDispatch, RootState} from "../../store/Store.ts";
 import {reverse} from "../../store/slice/ChatInfoSidebarSlice.ts";
+import {RoomChatImage} from "../common/RoomChatImage.tsx";
 
-const groupInfo = {
-    name: 'Quán cơm Cô Hương',
-    type: 'Cộng đồng',
-    membersCount: 771,
-    avatar: 'https://cdn-icons-png.flaticon.com/512/3448/3448609.png',
-};
+interface RoomHeaderPros{
+    name : string;
+    isRoomChat: boolean;
+    membersCount: number;
+}
 
-
-export function RoomHeader() {
+export function RoomHeader({name,isRoomChat}:RoomHeaderPros) {
 
     const dispatch = useDispatch<AppDispatch>();
     const reverseExpandStatusOfChatSideBarOnTheRight = ()=>{
@@ -22,6 +21,7 @@ export function RoomHeader() {
     const  isOpen = useSelector((state: RootState) => state.chatSidebar.isOpen);
 
     const label = isOpen ? 'Thu hẹp' : 'Mở rộng';
+    const chatType = isRoomChat ? 'Phong chat' : '';
 
     return (
         <div className="d-flex align-items-center p-3 bg-white border-bottom">
@@ -29,26 +29,21 @@ export function RoomHeader() {
                 className="rounded-circle border d-flex align-items-center justify-content-center p-1 me-3 flex-shrink-0"
                 style={{ width: 56, height: 56, borderColor: '#E2E8F0' }}
             >
-                <Image
-                    src={groupInfo.avatar}
-                    alt={groupInfo.name}
-                    roundedCircle
-                    className="w-100 h-100 object-fit-cover"
-                />
+               <RoomChatImage name={name}/>
             </div>
 
             <div className="d-flex flex-column justify-content-center">
                 <h5 className="fw-bold mb-1" style={{ color: '#0F2942', fontSize: '1.25rem', lineHeight: 1.2 }}>
-                    {groupInfo.name}
+                    {name}
                 </h5>
 
                 <div className="d-flex align-items-center gap-2 text-secondary" style={{ fontSize: '0.9rem' }}>
-                    <span>{groupInfo.type}</span>
+                    <span>{chatType}</span>
                     <span style={{ fontSize: '0.6rem', color: '#94A3B8' }}>•</span>
 
                     <div className="d-flex align-items-center gap-1">
                         <Users size={16} color="#0F2942" />
-                        <span style={{ color: '#0F2942' }}>{groupInfo.membersCount} thành viên</span>
+                        <span style={{ color: '#0F2942' }}>{999999999999999999999999999999999999999999999999999999999} thành viên</span>
                     </div>
 
                     <div className="vr mx-1" />

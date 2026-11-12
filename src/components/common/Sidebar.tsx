@@ -8,6 +8,9 @@ import {
 } from "react-bootstrap-icons";
 import { useAppDispatch, useAppSelector } from "../../store/Store.ts";
 import { getUserListThunk } from "../../thunks/SidebarThunk.ts";
+import type {UserSidebar} from "../../types/SiderbarData.ts";
+import {getRoomChatMesThunk} from "../../thunks/RoomManagementThunk.ts";
+import {AvatarChatImage} from "./AvatarChatImage.tsx";
 
 const formatTime = (value: string) => {
     const d = new Date(value.replace(" ", "T"));
@@ -49,6 +52,25 @@ function Sidebar() {
 
     const sorted = [...users].sort((a, b) => b.actionTime.localeCompare(a.actionTime));
 
+    const openChat = (userSidebar: UserSidebar) => {
+        // Lấy danh sách các phòng chat (type: 1) và bạn chat 1-1 (type: 0) gần nhất của người dùng.
+        switch (userSidebar.type) {
+            case 1 : {
+
+                const roomName = userSidebar.name;
+                dispatch(getRoomChatMesThunk({ name: roomName, page: 1 }))
+
+                break;
+            }
+            case 0 : {
+
+                break;
+            }
+            default:
+                break;
+        }
+    };
+
     return (
         <aside
             className="d-flex flex-column border-end bg-body h-100"
@@ -81,6 +103,7 @@ function Sidebar() {
                                     key={`${item.type}-${item.name}`}
                                     action
                                     className="d-flex align-items-center py-3"
+                                    onClick={() => openChat(item)}
                                 >
                                     <div
                                         className={`rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0 ${
@@ -90,7 +113,7 @@ function Sidebar() {
                                         }`}
                                         style={{ width: 44, height: 44 }}
                                     >
-                                        <Icon size={22} />
+                                        <AvatarChatImage name={item.name}/>
                                     </div>
 
                                     <div className="flex-grow-1 overflow-hidden">

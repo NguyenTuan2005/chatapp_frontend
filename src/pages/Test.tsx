@@ -1,10 +1,11 @@
 import {DisplayMembersRoom} from "../components/room/DisplayMembersRoom.tsx";
 import {RoomMemberList} from "../components/room/RoomMemberList.tsx";
 
-import {RoomHeader} from "../components/room/RoomHeader.tsx";
+// import {RoomHeader} from "../components/room/RoomHeader.tsx";
 import {DefaultNoneChatCarousel} from "../components/common/DefaultNoneChatCarousel.tsx";
 import CreateRoom from "../components/room/CreateRoom.tsx";
 import {OutRoom} from "../components/room/OutRoom.tsx";
+import {RoomChatImage} from "../components/common/RoomChatImage.tsx";
 
 function Hehe() {
 
@@ -15,7 +16,8 @@ function Hehe() {
         <DisplayMembersRoom></DisplayMembersRoom>
         <RoomMemberList></RoomMemberList>
         {/*<GroupInfoSidebar></GroupInfoSidebar>*/}
-        <RoomHeader/>
+        {/*<RoomHeader/>*/}
+        <RoomChatImage name={"hahah"}/>
         <DefaultNoneChatCarousel/>
     </div>;
 }

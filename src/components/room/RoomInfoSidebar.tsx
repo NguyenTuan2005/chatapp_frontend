@@ -4,21 +4,22 @@ import {RoomInfoSidebarHeader} from "./RoomInfoSidebarHeader.tsx";
 import {AccordionManagementRoomMembers} from "./ManagementRoomMember.tsx";
 import {RoomNewsBroad} from "./RoomNewsBroad.tsx";
 import {useSelector} from "react-redux";
-import {type RootState, useAppDispatch} from "../../store/Store.ts";
-
+import {type RootState} from "../../store/Store.ts";
 
 export function RoomInfoSidebar() {
-    const  isOpen = useSelector((state: RootState) => state.chatSidebar.isOpen);
-    const dispatch = useAppDispatch();
+    const isOpen = useSelector((state: RootState) => state.chatSidebar.isOpen);
     const currentRoom = useSelector((state: RootState) => state.roomManagement.currentRoom);
 
     if (!isOpen) {
-        return (<></>);
+        return null;
     }
 
-    if (!currentRoom){
-        return <>Error</>
+    if (!currentRoom) {
+        return <div className="p-3 text-muted">Không tìm thấy thông tin nhóm</div>;
     }
+
+    const roomName = currentRoom.name ?? '';
+    const numberOfMember = currentRoom.user?.length ?? 0;
 
     return (
         <div className="bg-white border-start" style={{ width: '360px', height: '100vh', overflowY: 'auto' }}>
@@ -29,21 +30,16 @@ export function RoomInfoSidebar() {
                 <div style={{ width: '22px' }}></div>
             </div>
 
-            <RoomInfoSidebarHeader info={{roomName: currentRoom?.name }}/>
+            <RoomInfoSidebarHeader info={{ roomName }} />
 
             <div style={{ height: '8px', backgroundColor: '#F0F2F5' }}></div>
 
             <Accordion defaultActiveKey={['0', '1', '2']} alwaysOpen className="custom-accordion">
-
-                <AccordionManagementRoomMembers info={ {
-                    numberOfMember: currentRoom?.user.length,
-                    roomName: currentRoom?.name
-                }}/>
+                <AccordionManagementRoomMembers info={{ numberOfMember, roomName }} />
 
                 <div style={{ height: '8px', backgroundColor: '#F0F2F5' }}></div>
 
-                <RoomNewsBroad info={{roomName: currentRoom?.name}}/>
-
+                <RoomNewsBroad info={{ roomName }} />
             </Accordion>
         </div>
     );

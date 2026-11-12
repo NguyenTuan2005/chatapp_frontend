@@ -15,6 +15,7 @@ export const router = createBrowserRouter([
                 path: "*",
                 element: <NotFound/>
             },
+            {path: "/hehe", element: <Hehe/>}
         ]
     },
     {
@@ -24,7 +25,7 @@ export const router = createBrowserRouter([
                 element: <MainLayout/>,
                 children: [
                     { path: "/", element: <RoomConversation/>}
-                    ,{path: "/hehe", element: <Hehe/>}
+
                 ]
             }
         ]

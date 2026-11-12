@@ -1,5 +1,6 @@
-import {Button, Col, Image, Row} from "react-bootstrap";
+import {Button, Col, Row} from "react-bootstrap";
 import {Bell, Pin, Settings, UserPlus} from "lucide-react";
+import {RoomChatImage} from "../common/RoomChatImage.tsx";
 
 interface IRoomInfoSidebarHeader{
     roomName: string
@@ -12,12 +13,11 @@ interface RoomInfoSidebarHeaderPros {
 
 export function  RoomInfoSidebarHeader({info}:RoomInfoSidebarHeaderPros ){
 
-    const  avatar = 'https://cdn-icons-png.flaticon.com/512/3135/3135515.png';
     return (
         <>
             <div className="d-flex flex-column align-items-center p-4">
                 <div className="position-relative mb-3">
-                    <Image src={avatar} roundedCircle width={80} height={80} className="border p-1" />
+                    <RoomChatImage name={info.roomName}/>
                 </div>
                 <div className="d-flex align-items-center gap-2 mb-4">
                   <span className="fw-bold fs-5 text-center" style={{ color: '#0F2942' }}>
