@@ -113,7 +113,9 @@ function Sidebar() {
                                         }`}
                                         style={{ width: 44, height: 44 }}
                                     >
-                                        <AvatarChatImage name={item.name}/>
+                                        <AvatarChatImage name={item.name}>
+                                            <Icon size={22} />
+                                        </AvatarChatImage>
                                     </div>
 
                                     <div className="flex-grow-1 overflow-hidden">
