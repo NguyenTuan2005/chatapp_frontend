@@ -24,7 +24,7 @@ function Login() {
         e.preventDefault();
         const result = await dispatch(loginThunk({ user, pass }));
         if (loginThunk.fulfilled.match(result)) {
-            navigate("/");
+            navigate("/chat/test");
         }
     };
 

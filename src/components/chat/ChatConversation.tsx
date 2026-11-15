@@ -9,11 +9,9 @@ import {USER_KEY} from "../../config/WSEventsEnum.ts";
 import {reLoginStorage} from "../../thunks/AuthThunk.ts";
 import {useParams} from "react-router";
 
-
-
 const ChatConversation = () => {
 
-    const { username: targetUsername } = useParams();
+    const { username: recipientUsername } = useParams();
 
     const currentUsername = reLoginStorage.get(USER_KEY);
 
@@ -21,7 +19,7 @@ const ChatConversation = () => {
 
     useEffect(() => {
 
-        if (!targetUsername || !currentUsername) {
+        if (!recipientUsername || !currentUsername) {
             console.error("Missing username");
             return;
         }
@@ -32,9 +30,9 @@ const ChatConversation = () => {
             try {
 
                 console.log("Current user:", currentUsername);
-                console.log("Chat with:", targetUsername);
+                console.log("Chat with:", recipientUsername);
 
-                const response = await ChatService.getPeopleMessages(targetUsername, 1);
+                const response = await ChatService.getPeopleMessages(recipientUsername, 1);
 
 
                 console.log("2. Chat messages:", response);
@@ -59,21 +57,38 @@ const ChatConversation = () => {
         loadMessages();
     }, []);
 
-    const handleSendMessage = (content: string) => {
-        const newMessage: ChatMessage = {
-            id: Date.now(),
-            sender: "hoang",
-            content: content,
-            createdAt: new Date().toLocaleTimeString("vi-VN", {
-                hour: "2-digit",
-                minute: "2-digit",
-            }),
-            isMine: true,
-        };
+    const handleSendMessage = async (content: string): Promise<void> => {
+        if (!recipientUsername || !currentUsername) {
+            throw new Error("Missing username");
+        }
 
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        const trimmedContent = content.trim();
+
+        if (!trimmedContent) return;
+
+        try {
+            const response = await ChatService.sendPeopleMessage(
+                recipientUsername,
+                trimmedContent
+            );
+
+            console.log("SEND_CHAT response:", response);
+
+            const newMessage: ChatMessage = {
+                id: crypto.randomUUID(),
+                sender: response.name,
+                content: response.mes,
+                createdAt: new Date(),
+                isMine: response.name === currentUsername
+            };
+
+            setMessages(prev => [...prev, newMessage]);
+
+        } catch (error) {
+            console.error("Send message failed:", error);
+            throw error;
+        }
     };
-
 
     return (
         <section className="chat-conversation d-flex flex-column">

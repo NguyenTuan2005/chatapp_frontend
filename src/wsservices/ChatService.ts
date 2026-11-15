@@ -1,4 +1,4 @@
-import type {ChatMessageResponse} from "../types/Chat.ts";
+import type {ChatMessageResponse, SendChatRequest, SendChatResponse} from "../types/Chat.ts";
 import {websocketService} from "../config/Websocket.ts";
 import {WS_EVENTS} from "../config/WSEventsEnum.ts";
 
@@ -50,5 +50,20 @@ export const ChatService = {
             console.error("Get messages error:", error);
             throw error;
         }
+    },
+
+    async sendPeopleMessage(
+        recipientUsername: string,
+        content: string
+    ): Promise<SendChatResponse> {
+
+        return websocketService.request<
+            SendChatResponse,
+            SendChatRequest
+        >(WS_EVENTS.SEND_CHAT, {
+            type: "people",
+            to: recipientUsername,
+            mes: content
+        });
     }
 };
