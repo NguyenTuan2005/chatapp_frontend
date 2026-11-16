@@ -57,29 +57,24 @@ const ChatConversation = () => {
         loadMessages();
     }, []);
 
-    const handleSendMessage = async (content: string): Promise<void> => {
+    const handleSendMessage = (content: string): void => {
         if (!recipientUsername || !currentUsername) {
-            throw new Error("Missing username");
+            console.error("Missing username");
+            return;
         }
 
-        const trimmedContent = content.trim();
-
-        if (!trimmedContent) return;
-
         try {
-            const response = await ChatService.sendPeopleMessage(
+            ChatService.sendPeopleMessage(
                 recipientUsername,
-                trimmedContent
+                content
             );
-
-            console.log("SEND_CHAT response:", response);
 
             const newMessage: ChatMessage = {
                 id: crypto.randomUUID(),
-                sender: response.name,
-                content: response.mes,
+                sender: currentUsername,
+                content,
                 createdAt: new Date(),
-                isMine: response.name === currentUsername
+                isMine: true
             };
 
             setMessages(prev => [...prev, newMessage]);

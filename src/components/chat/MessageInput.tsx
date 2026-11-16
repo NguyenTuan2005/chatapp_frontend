@@ -2,30 +2,23 @@
 import React, { useState } from "react";
 
 export interface MessageInputProps {
-    onSend: (content: string) => Promise<void>;
+    onSend: (content: string) => void;
 }
 
 
 const MessageInput = ({ onSend }: MessageInputProps) => {
     const [message, setMessage] = useState("");
-    const [isSending, setIsSending] = useState(false);
 
-    const handleSend = async () => {
+    const handleSend = () => {
         const content = message.trim();
 
-        if (!content || isSending) return;
+        if (!content) return;
 
         try {
-            setIsSending(true);
-
-            await onSend(content);
-
+            onSend(content);
             setMessage("");
-
         } catch (error) {
             console.error("Cannot send message:", error);
-        } finally {
-            setIsSending(false);
         }
     };
 
@@ -64,13 +57,11 @@ const MessageInput = ({ onSend }: MessageInputProps) => {
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
                     rows={1}
-                    disabled={isSending}
                 />
 
                 <button
                     className="btn btn-primary chat-send-button"
                     onClick={() => void handleSend()}
-                    disabled={!message.trim() || isSending}
                     title="Gửi tin nhắn"
                 >
                     <i className="bi bi-send-fill"></i>
