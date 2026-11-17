@@ -14,7 +14,7 @@ export interface Conversation {
 }
 
 export interface ChatMessage {
-    id: number;
+    id: string | number;
     sender: string;
     content: string;
     createdAt: Date;
@@ -27,5 +27,18 @@ export interface ChatMessageResponse {
     to: string;
     mes: string;
     createAt: string;
+    type: number;
+}
+
+export interface SendChatRequest {
+    type: "people";
+    to: string;
+    mes: string;
+}
+
+export interface SendChatResponse {
+    name: string;
+    to: string;
+    mes: string;
     type: number;
 }

@@ -1,20 +1,7 @@
 import type {ChatMessageResponse} from "../types/Chat.ts";
 import {websocketService} from "../config/Websocket.ts";
-import {WS_EVENTS} from "../config/WSEventsEnum.ts";
+import {ACTION_ON_CHAT, WS_EVENTS} from "../config/WSEventsEnum.ts";
 
-export interface WebSocketRequest<T> {
-    action: "onchat";
-    data: {
-        event: string;
-        data: T;
-    };
-}
-
-export interface WebSocketResponse<T> {
-    status: string;
-    event: string;
-    data: T;
-}
 
 
 export const ChatService = {
@@ -50,5 +37,22 @@ export const ChatService = {
             console.error("Get messages error:", error);
             throw error;
         }
+    },
+
+    sendPeopleMessage(
+        recipientUsername: string,
+        content: string
+    ): void {
+        websocketService.send({
+            action: ACTION_ON_CHAT,
+            data: {
+                event: WS_EVENTS.SEND_CHAT,
+                data: {
+                    type: "people",
+                    to: recipientUsername,
+                    mes: content
+                }
+            }
+        });
     }
 };
