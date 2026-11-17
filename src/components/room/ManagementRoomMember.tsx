@@ -1,5 +1,6 @@
 import {Accordion, Button} from "react-bootstrap";
 import {Copy, Link, Share2, Users} from "lucide-react";
+import {OutRoom} from "./OutRoom.tsx";
 
 interface IAccordionRoomMembers{
     numberOfMember:number;
@@ -33,11 +34,21 @@ export function AccordionManagementRoomMembers({ info }: AccordionRoomMembersPro
                                 <small className="text-primary text-truncate d-block">{info.roomName}</small>
                             </div>
                         </div>
+
                         <div className="d-flex gap-1 flex-shrink-0">
                             <Button variant="light" size="sm" className="rounded-circle p-1"><Copy size={16} /></Button>
                             <Button variant="light" size="sm" className="rounded-circle p-1"><Share2 size={16} /></Button>
                         </div>
                     </div>
+                    <div className="d-flex align-items-center gap-3 py-2">
+                        <Users size={20} color="#0F2942" />
+                        <span className="fw-medium">
+                             <OutRoom roomName={info.roomName}/>
+                        </span>
+                    </div>
+
+
+
                 </Accordion.Body>
             </Accordion.Item>
         </>

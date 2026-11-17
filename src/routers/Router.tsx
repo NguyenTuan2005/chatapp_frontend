@@ -2,8 +2,9 @@ import {createBrowserRouter, Navigate, Outlet} from 'react-router';
 import NotFound from "../components/common/NotFound.tsx";
 import Login from "../pages/Login.tsx";
 import MainLayout from "../layouts/MainLayout.tsx";
-import {RoomConversation} from "../components/RoomConversation.tsx";
+import {RoomConversation} from "../components/room/RoomConversation.tsx";
 import {useAppSelector} from "../store/Store.ts";
+import Hehe from "../pages/Test.tsx";
 import AppSkeleton from "../components/common/AppSkeleton.tsx";
 import ChatPage from "../pages/ChatPage.tsx";
 
@@ -14,6 +15,7 @@ export const router = createBrowserRouter([
                 path: "*",
                 element: <NotFound/>
             },
+            {path: "/hehe", element: <Hehe/>}
         ]
     },
     {
