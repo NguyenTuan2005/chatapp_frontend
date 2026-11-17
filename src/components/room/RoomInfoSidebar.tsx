@@ -19,7 +19,7 @@ export function RoomInfoSidebar() {
     }
 
     const roomName = currentRoom.name ?? '';
-    const numberOfMember = currentRoom.user?.length ?? 0;
+    const numberOfMember = currentRoom.user?.length ?? -999;
 
     return (
         <div className="bg-white border-start" style={{ width: '360px', height: '100vh', overflowY: 'auto' }}>

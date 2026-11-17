@@ -3,15 +3,19 @@
 
 import {RoomInfoSidebar} from "./RoomInfoSidebar.tsx";
 import {RoomHeader} from "./RoomHeader.tsx";
+import {useAppSelector} from "../../store/Store.ts";
 
 export function RoomConversation() {
+    const room = useAppSelector(state => state.roomManagement.currentRoom);
+    const roomName = room ? room.name : "Error";
+    const membersCount = room?.user ? room?.user.length: -999;
     return (
         <div className="d-flex w-100 vh-100 overflow-hidden bg-light">
 
             <div className="d-flex flex-column flex-grow-1 h-100 border-end overflow-hidden">
 
                 <div className="flex-shrink-0 bg-white border-bottom">
-                    <RoomHeader />
+                    <RoomHeader name={roomName} isRoomChat={true} membersCount={membersCount}/>
                 </div>
 
                 {/* MOCK data */}

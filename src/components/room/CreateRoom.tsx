@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button, Form, Alert, Spinner, Card } from "react-bootstrap";
+import {Modal, Button, Form, Alert, Spinner, Card, OverlayTrigger, Tooltip} from "react-bootstrap";
 import { Users, Plus, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../store/Store.ts";
 import { createRoomThunk } from "../../thunks/RoomManagementThunk.ts";
@@ -23,7 +23,7 @@ export const CreateRoom = ({
     const existingRooms = useAppSelector((state) => state.roomManagement.rooms);
     const serverError = useAppSelector((state) => state.roomManagement.error);
 
-    const [internalShow, setInternalShow] = useState(true);
+    const [internalShow, setInternalShow] = useState(false);
     const [roomName, setRoomName] = useState("");
     const [localError, setLocalError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -99,7 +99,6 @@ export const CreateRoom = ({
             }, 1000);
 
         } catch (err) {
-            // unwrap() ném ra rejectValue (string) khi thunk bị rejected
             setLocalError(
                 typeof err === "string"
                     ? mapServerError(err, trimmedName)
@@ -199,9 +198,16 @@ export const CreateRoom = ({
                 <Card.Header className="bg-transparent border-0 px-0 pt-0 pb-3">
                     <div className="d-flex align-items-center gap-2">
                         <Users size={20} color="#0068ff" />
-                        <h5 className="fw-bold mb-0" style={{ color: "#0F2942" }}>
-                            Tạo phòng chat mới
-                        </h5>
+                        <OverlayTrigger
+                            placement="top"
+                            overlay={
+                                <Tooltip id="create-room-tooltip">
+                                    Tạo phòng chat mới
+                                </Tooltip>
+                            }
+                        >
+                            <div><Plus></Plus>Room</div>
+                        </OverlayTrigger>
                     </div>
                 </Card.Header>
                 <Card.Body className="p-0">{formContent}</Card.Body>
@@ -218,8 +224,17 @@ export const CreateRoom = ({
                     className="d-inline-flex align-items-center gap-2"
                     style={{ backgroundColor: "#0068ff", borderColor: "#0068ff" }}
                 >
-                    <Plus size={18} />
-                    <span>Tạo phòng chat mới</span>
+
+                    <OverlayTrigger
+                        placement="top"
+                        overlay={
+                            <Tooltip id="create-room-tooltip">
+                                Tạo phòng chat mới
+                            </Tooltip>
+                        }
+                    >
+                       <div><Plus></Plus>Room</div>
+                    </OverlayTrigger>
                 </Button>
             )}
             <Modal

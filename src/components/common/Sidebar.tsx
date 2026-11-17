@@ -11,6 +11,8 @@ import { getUserListThunk } from "../../thunks/SidebarThunk.ts";
 import type {UserSidebar} from "../../types/SiderbarData.ts";
 import {getRoomChatMesThunk} from "../../thunks/RoomManagementThunk.ts";
 import {AvatarChatImage} from "./AvatarChatImage.tsx";
+import CreateRoom from "../room/CreateRoom.tsx";
+import JoinRoom from "../room/JoinRoom.tsx";
 
 const formatTime = (value: string) => {
     const d = new Date(value.replace(" ", "T"));
@@ -71,6 +73,7 @@ function Sidebar() {
         }
     };
 
+    // @ts-ignore
     return (
         <aside
             className="d-flex flex-column border-end bg-body h-100"
@@ -94,6 +97,10 @@ function Sidebar() {
                     </p>
                 ) : (
                     <ListGroup variant="flush">
+                        <div>
+                            <CreateRoom/>
+                            <JoinRoom/>
+                        </div>
                         {sorted.map((item) => {
                             const isRoom = item.type === 1;
                             const Icon = isRoom ? PeopleFill : PersonCircle;

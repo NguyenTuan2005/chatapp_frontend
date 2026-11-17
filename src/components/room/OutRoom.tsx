@@ -17,8 +17,6 @@ export function OutRoom({ roomName }: OutRoomProps) {
         setIsLoading(true);
         try {
             await dispatch(outRoomThunk(roomName)).unwrap();
-
-
         } catch (err) {
             setError(typeof err === "string" ? err : "Rời phòng thất bại!");
         } finally {

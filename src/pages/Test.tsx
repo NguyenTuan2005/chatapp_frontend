@@ -6,11 +6,13 @@ import {DefaultNoneChatCarousel} from "../components/common/DefaultNoneChatCarou
 import CreateRoom from "../components/room/CreateRoom.tsx";
 import {OutRoom} from "../components/room/OutRoom.tsx";
 import {RoomChatImage} from "../components/common/RoomChatImage.tsx";
+import {JoinRoom} from "../components/room/JoinRoom.tsx";
 
 function Hehe() {
 
 
     return <div>demo
+        <JoinRoom></JoinRoom>
         <OutRoom roomName={"FIT_NLU"}/>
         <CreateRoom></CreateRoom>
         <DisplayMembersRoom></DisplayMembersRoom>

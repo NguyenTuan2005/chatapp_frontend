@@ -12,7 +12,7 @@ interface RoomHeaderPros{
     membersCount: number;
 }
 
-export function RoomHeader({name,isRoomChat}:RoomHeaderPros) {
+export function RoomHeader({name,isRoomChat,membersCount}:RoomHeaderPros) {
 
     const dispatch = useDispatch<AppDispatch>();
     const reverseExpandStatusOfChatSideBarOnTheRight = ()=>{
@@ -43,7 +43,7 @@ export function RoomHeader({name,isRoomChat}:RoomHeaderPros) {
 
                     <div className="d-flex align-items-center gap-1">
                         <Users size={16} color="#0F2942" />
-                        <span style={{ color: '#0F2942' }}>{999999999999999999999999999999999999999999999999999999999} thành viên</span>
+                        <span style={{ color: '#0F2942' }}>{membersCount} thành viên</span>
                     </div>
 
                     <div className="vr mx-1" />
