@@ -13,6 +13,7 @@ import {getRoomChatMesThunk} from "../../thunks/RoomManagementThunk.ts";
 import {AvatarChatImage} from "./AvatarChatImage.tsx";
 import CreateRoom from "../room/CreateRoom.tsx";
 import JoinRoom from "../room/JoinRoom.tsx";
+import {useNavigate} from "react-router";
 
 const formatTime = (value: string) => {
     const d = new Date(value.replace(" ", "T"));
@@ -39,6 +40,8 @@ function Sidebar() {
     const error = useAppSelector((state) => state.siderbar.error);
     const loading = useAppSelector((state) => state.siderbar.loading);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         dispatch(getUserListThunk());
     }, [dispatch]);
@@ -61,7 +64,8 @@ function Sidebar() {
 
                 const roomName = userSidebar.name;
                 dispatch(getRoomChatMesThunk({ name: roomName, page: 1 }))
-
+                navigate("/room")
+                
                 break;
             }
             case 0 : {
