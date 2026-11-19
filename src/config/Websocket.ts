@@ -10,9 +10,13 @@ type Pending = {
     reject: (error: Error) => void;
 };
 
+type EventListener = (data: unknown) => void;
+
+
 class WebSocketService {
     private socket: WebSocket | null = null;
     private pending = new Map<string, Pending>();
+    private listeners = new Map<string, Set<EventListener>>();
 
     connect(): Promise<void> {
         if (this.socket?.readyState === WebSocket.OPEN) return Promise.resolve();
@@ -57,6 +61,22 @@ class WebSocketService {
         return this.socket?.readyState === WebSocket.OPEN;
     }
 
+    subscribe(event: string, callback: EventListener): () => void {
+        if (!this.listeners.has(event)) {
+            this.listeners.set(event, new Set());
+        }
+
+        this.listeners.get(event)!.add(callback);
+
+        return () => {
+            this.listeners.get(event)?.delete(callback);
+
+            if (this.listeners.get(event)?.size === 0) {
+                this.listeners.delete(event);
+            }
+        };
+    }
+
     private handleMessage(response: ServerResponse) {
         console.log("WebSocket received:", response);
 
@@ -73,18 +93,29 @@ class WebSocketService {
 
         const waiting = this.pending.get(response.event);
 
-        if (!waiting) {
-            console.log("No pending request for event:", response.event);
+        if (waiting) {
+            this.pending.delete(response.event);
+
+            if (response.status === ResponseStatus.SUCCESS) {
+                waiting.resolve(response.data);
+            } else {
+                waiting.reject(new Error(response.mes));
+            }
+
             return;
         }
 
-        this.pending.delete(response.event);
-
         if (response.status === ResponseStatus.SUCCESS) {
-            waiting.resolve(response.data);
-        } else {
-            waiting.reject(new Error(response.mes));
+            this.notifyListeners(response.event, response.data);
         }
+    }
+
+    private notifyListeners(event: string, data: unknown) {
+        const callbacks = this.listeners.get(event);
+
+        callbacks?.forEach(callback => {
+            callback(data);
+        });
     }
 }
 

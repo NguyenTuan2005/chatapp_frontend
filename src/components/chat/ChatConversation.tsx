@@ -57,6 +57,34 @@ const ChatConversation = () => {
         loadMessages();
     }, []);
 
+    useEffect(() => {
+        if (!recipientUsername || !currentUsername) return;
+
+        const unsubscribe = ChatService.subscribeToIncomingMessages(
+            (message) => {
+                console.log("[Chat] Incoming message:", message);
+
+
+                if (message.to !== currentUsername || message.name !== recipientUsername) {
+                    return;
+                }
+
+                const newMessage: ChatMessage = {
+                    id: crypto.randomUUID(),
+                    sender: message.name,
+                    content: message.mes,
+                    createdAt: new Date(),
+                    isMine: false
+                };
+
+                setMessages(prev => [...prev, newMessage]);
+            }
+        );
+
+        return unsubscribe;
+    }, [recipientUsername, currentUsername]);
+
+
     const handleSendMessage = (content: string): void => {
         if (!recipientUsername || !currentUsername) {
             console.error("Missing username");
