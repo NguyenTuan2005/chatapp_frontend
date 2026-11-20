@@ -81,7 +81,7 @@ function Sidebar() {
     const sorted = [...users].sort((a, b) => b.actionTime.localeCompare(a.actionTime));
 
     const openChat = (userSidebar: UserSidebar) => {
-        // Lấy danh sách các phòng chat (type: 1) và bạn chat 1-1 (type: 0) gần nhất của người dùng.
+
         switch (userSidebar.type) {
             case 1 : {
 
@@ -92,6 +92,9 @@ function Sidebar() {
                 break;
             }
             case 0 : {
+
+                const username = userSidebar.name;
+                navigate(`/chat/${username}`)
 
                 break;
             }
