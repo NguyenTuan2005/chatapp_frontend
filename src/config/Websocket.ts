@@ -10,9 +10,13 @@ type Pending = {
     reject: (error: Error) => void;
 };
 
+type EventListener = (data: unknown) => void;
+
+
 class WebSocketService {
     private socket: WebSocket | null = null;
     private pending = new Map<string, Pending>();
+    private listeners = new Map<string, Set<EventListener>>();
 
     connect(): Promise<void> {
         if (this.socket?.readyState === WebSocket.OPEN) return Promise.resolve();
@@ -64,6 +68,22 @@ class WebSocketService {
         return this.socket?.readyState === WebSocket.OPEN;
     }
 
+    subscribe(event: string, callback: EventListener): () => void {
+        if (!this.listeners.has(event)) {
+            this.listeners.set(event, new Set());
+        }
+
+        this.listeners.get(event)!.add(callback);
+
+        return () => {
+            this.listeners.get(event)?.delete(callback);
+
+            if (this.listeners.get(event)?.size === 0) {
+                this.listeners.delete(event);
+            }
+        };
+    }
+
     private handleMessage(response: ServerResponse) {
         console.log("WebSocket received:", response);
 
@@ -75,17 +95,36 @@ class WebSocketService {
         }
 
         const waiting = this.pending.get(key);
-        if (!waiting) return;
-        this.pending.delete(key);
 
-        if (response.status === ResponseStatus.SUCCESS) waiting.resolve(response.data);
-        else waiting.reject(new Error(response.mes));
+        if (waiting) {
+            this.pending.delete(key);
+
+            if (response.status === ResponseStatus.SUCCESS) {
+                waiting.resolve(response.data);
+            } else {
+                waiting.reject(new Error(response.mes));
+            }
+
+            return;
+        }
+
+        if (response.status === ResponseStatus.SUCCESS) {
+            this.notifyListeners(response.event, response.data);
+        }
     }
 
     private rejectAll(reason: string) {
         const error = new Error(reason);
         this.pending.forEach((w) => w.reject(error));
         this.pending.clear();
+    }
+
+    private notifyListeners(event: string, data: unknown) {
+        const callbacks = this.listeners.get(event);
+
+        callbacks?.forEach(callback => {
+            callback(data);
+        });
     }
 }
 
