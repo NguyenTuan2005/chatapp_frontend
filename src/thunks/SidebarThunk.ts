@@ -14,3 +14,16 @@ export const getUserListThunk = createAsyncThunk<
         return rejectWithValue(error instanceof Error ? error.message : "get user list failed");
     }
 });
+
+export const checkUserOnlineThunk = createAsyncThunk<
+    boolean,
+    string,
+    { rejectValue: string }
+>("sidebar/checkUserOnline", async (user: string, { rejectWithValue })=> {
+    try {
+        const isOnline = await SidebarService.checkUserOnline(user);
+        return isOnline;
+    } catch (error) {
+        return rejectWithValue(error instanceof Error ? error.message : "check user online failed");
+    }
+});

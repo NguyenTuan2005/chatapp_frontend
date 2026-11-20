@@ -5,11 +5,12 @@ import {WS_EVENTS} from "../config/WSEventsEnum.ts";
 
 export const SidebarService = {
     async getUserList(): Promise<UserSidebar[]>{
-        await websocketService.connect();
-
         return await websocketService.request<
             UserSidebar[],
             {}
         >(WS_EVENTS.GET_USER_LIST, {});
+    },
+    async checkUserOnline(user: string): Promise<boolean> {
+        return websocketService.request("CHECK_USER_ONLINE", { user });
     }
 }

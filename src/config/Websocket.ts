@@ -20,6 +20,12 @@ class WebSocketService {
         if (!this.socket || this.socket.readyState > WebSocket.OPEN) {
             this.socket = new WebSocket(import.meta.env.VITE_CHAT_WS_URL);
             this.socket.onmessage = (e) => this.handleMessage(JSON.parse(e.data));
+            this.socket.onclose = (e) => {
+                if (this.socket === socket) this.socket = null;
+                this.rejectAll("Socket closed");
+                console.log("WS CLOSED", e.code, e.reason, e.wasClean);
+            };
+            this.socket.onerror = (e) => console.log("WS ERROR", e);
         }
 
         const socket = this.socket;
@@ -51,6 +57,7 @@ class WebSocketService {
     disconnect() {
         this.socket?.close();
         this.socket = null;
+        this.rejectAll("Disconnected");
     }
 
     isConnected() {
@@ -60,31 +67,25 @@ class WebSocketService {
     private handleMessage(response: ServerResponse) {
         console.log("WebSocket received:", response);
 
-        if (response.event === "AUTH") {
-            const error = new Error(response.event);
+        if (response.event === "AUTH") return this.rejectAll("AUTH");
 
-            this.pending.forEach((waiting) => {
-                waiting.reject(error);
-            });
-
-            this.pending.clear();
-            return;
+        let key = response.event;
+        if (!this.pending.has(key) && response.status === ResponseStatus.ERROR) {
+            key = this.pending.keys().next().value ?? key;
         }
 
-        const waiting = this.pending.get(response.event);
+        const waiting = this.pending.get(key);
+        if (!waiting) return;
+        this.pending.delete(key);
 
-        if (!waiting) {
-            console.log("No pending request for event:", response.event);
-            return;
-        }
+        if (response.status === ResponseStatus.SUCCESS) waiting.resolve(response.data);
+        else waiting.reject(new Error(response.mes));
+    }
 
-        this.pending.delete(response.event);
-
-        if (response.status === ResponseStatus.SUCCESS) {
-            waiting.resolve(response.data);
-        } else {
-            waiting.reject(new Error(response.mes));
-        }
+    private rejectAll(reason: string) {
+        const error = new Error(reason);
+        this.pending.forEach((w) => w.reject(error));
+        this.pending.clear();
     }
 }
 
