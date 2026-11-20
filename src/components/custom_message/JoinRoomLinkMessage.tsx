@@ -1,6 +1,7 @@
 import {Card} from "react-bootstrap";
 import {useNavigate} from "react-router";
 import {MessageRow} from "./MessageRow.tsx";
+import type {ChatMessage} from "../../types/Chat.ts";
 
 
 export interface JoinRoomLinkMessagePros {
@@ -8,15 +9,15 @@ export interface JoinRoomLinkMessagePros {
     groupName: string;
     groupAvatar?: string;
     time?: string;
-    isMine: boolean;
+    message: ChatMessage;
 }
 
 export function JoinRoomLinkMessage({
                                         url,
                                         groupName,
                                         groupAvatar,
-                                        time,
-    isMine
+    message
+
                                     }: JoinRoomLinkMessagePros) {
     const navigate = useNavigate();
 
@@ -42,13 +43,12 @@ export function JoinRoomLinkMessage({
     };
 
     return (
-        <MessageRow isMine={isMine} time={time}>
+        <MessageRow isMine={message.isMine} createdAt={message.createdAt}>
             <Card
                 className="border-primary-subtle"
                 style={{ width: 360, maxWidth: "100%", background: "#e3f0ff" }}
             >
                 <Card.Body className="p-3">
-                    {/* Link */}
                     <a
                         href={url}
                         onClick={handleClick}
@@ -57,7 +57,6 @@ export function JoinRoomLinkMessage({
                         {url}
                     </a>
 
-                    {/* Preview card */}
                     <div role="button" onClick={handleClick}>
                         <div
                             className="d-flex align-items-center gap-3 text-white rounded px-3 py-4"

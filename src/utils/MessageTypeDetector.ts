@@ -18,6 +18,10 @@ export function getChatMessageType(content: string): ChatMessageType {
         return ChatMessageType.ICON;
     }
 
+    if(isHtml(content)){
+        return ChatMessageType.HTML;
+    }
+
     return ChatMessageType.TEXT;
 }
 
@@ -34,4 +38,14 @@ export function isImage(content: string): boolean {
 
 export function isIcon(content: string): boolean {
     return content.startsWith(":icon:");
+}
+
+export function isHtml(content: string): boolean {
+    if (!content) return false;
+
+    const doc = new DOMParser().parseFromString(content, "text/html");
+
+    return Array.from(doc.body.childNodes).some(
+        (node) => node.nodeType === Node.ELEMENT_NODE
+    );
 }
