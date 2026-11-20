@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Card, Image, Placeholder, Ratio } from "react-bootstrap";
 import {MessageRow} from "./MessageRow.tsx";
+import type {ChatMessage} from "../../types/Chat.ts";
 
 export interface LinkPreviewMessageProps {
     url: string;
     time?: string;
     className?: string;
-    isMine: boolean;
+    message : ChatMessage;
 }
 
 interface LinkMeta {
@@ -37,7 +38,7 @@ async function fetchLinkMeta(url: string, signal: AbortSignal): Promise<LinkMeta
 }
 
 
-export function LinkPreviewMessage ({ url, time, className = "", isMine }: LinkPreviewMessageProps ){
+export function LinkPreviewMessage ({ url, className = "", message }: LinkPreviewMessageProps ){
     const [meta, setMeta] = useState<LinkMeta | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -62,7 +63,7 @@ export function LinkPreviewMessage ({ url, time, className = "", isMine }: LinkP
 
 
     return (
-        <MessageRow isMine={isMine} time={time}>
+        <MessageRow isMine={message.isMine} createdAt={message.createdAt} >
             <Card
                 className={`bg-primary-subtle border-0 shadow-sm rounded-3 ${className ?? ""}`}
                 style={{ width: 564, maxWidth: "100%" }}

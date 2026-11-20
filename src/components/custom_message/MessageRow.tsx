@@ -1,13 +1,14 @@
 import type { ReactNode } from "react";
+import {formatMessageTime} from "../../utils/DateUtils.ts";
 
 interface MessageRowProps {
     isMine: boolean;
-    time?: string;
     avatarText?: string;
+    createdAt: Date;
     children: ReactNode;
 }
 
-export const MessageRow = ({ isMine, time, avatarText = "T", children }: MessageRowProps) => (
+export const MessageRow = ({ isMine,createdAt, avatarText = "T", children }: MessageRowProps) => (
     <div
         className={`chat-message-row d-flex gap-2 ${
             isMine ? "justify-content-end" : "justify-content-start"
@@ -22,7 +23,10 @@ export const MessageRow = ({ isMine, time, avatarText = "T", children }: Message
         >
             {children}
 
-            {time && <small className="chat-message-time">{time}</small>}
+            {/*{time && <small className="chat-message-time">{time}</small>}*/}
+            <small className="chat-message-time">
+                {formatMessageTime(createdAt)}
+            </small>
         </div>
     </div>
 );

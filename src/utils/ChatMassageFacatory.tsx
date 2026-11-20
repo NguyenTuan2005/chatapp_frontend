@@ -1,12 +1,12 @@
-import type { ReactNode } from "react";
-import { ChatMessageType } from "../config/WSEventsEnum.ts";
-import type { ChatMessage } from "../types/Chat.ts";
-import { LinkPreviewMessage } from "../components/custom_message/PreviewLinkMessage.tsx";
-import { JoinRoomLinkMessage } from "../components/custom_message/JoinRoomLinkMessage.tsx";
-import { getRoomNameFromUrl } from "../utils/joinRoomLink.ts";
+import type {ReactNode} from "react";
+import {ChatMessageType} from "../config/WSEventsEnum.ts";
+import type {ChatMessage} from "../types/Chat.ts";
+import {LinkPreviewMessage} from "../components/custom_message/PreviewLinkMessage.tsx";
+import {JoinRoomLinkMessage} from "../components/custom_message/JoinRoomLinkMessage.tsx";
+import {getRoomNameFromUrl} from "../utils/joinRoomLink.ts";
 import {getRoomAvatarUrl} from "../components/common/RoomChatImage.tsx";
-import { TextMessage } from "../components/custom_message/TextMessage.tsx";
-import {formatMessageDate} from "./DateUtils.ts";
+import {TextMessage} from "../components/custom_message/TextMessage.tsx";
+import {HtmlMessage} from "../components/custom_message/HtmlMessage.tsx";
 
 export interface ChatMessageFactoryPros {
     type: ChatMessageType;
@@ -18,13 +18,11 @@ export function ChatMessageFactory({
                                        type,
                                        chatMessage,showDateSeparator
                                    }: ChatMessageFactoryPros): ReactNode {
-    const time = formatMessageDate(chatMessage.createdAt);
-    const isMine = chatMessage.isMine;
 
     switch (type) {
         case ChatMessageType.PREVIEW_LINK: {
 
-            return <LinkPreviewMessage url={chatMessage.content} time={time}  isMine={isMine} />;
+            return <LinkPreviewMessage url={chatMessage.content}   message={chatMessage} />;
         }
 
         case ChatMessageType.JOIN_ROOM_LINK: {
@@ -36,8 +34,7 @@ export function ChatMessageFactory({
                     url={chatMessage.content}
                     groupName={roomName}
                     groupAvatar={roomAvatar}
-                    time={time}
-                    isMine={isMine}
+                    message={chatMessage}
                 />
             );
         }
@@ -65,6 +62,11 @@ export function ChatMessageFactory({
                 />
             );
         }
+
+        case ChatMessageType.HTML : {
+            return <HtmlMessage message={chatMessage} />;
+        }
+
         default:
             return <span>Unknown</span>;
     }
