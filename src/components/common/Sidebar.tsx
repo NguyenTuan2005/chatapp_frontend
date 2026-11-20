@@ -17,6 +17,7 @@ import {checkUserExistThunk, reLoginStorage} from "../../thunks/AuthThunk.ts";
 import {USER_KEY} from "../../config/WSEventsEnum.ts";
 import {useNavigate} from "react-router";
 import SearchUser from "./SearchUser.tsx";
+import "../../styles/sidebar.css";
 
 const formatTime = (value: string) => {
     const d = new Date(value.replace(" ", "T"));
@@ -127,15 +128,26 @@ function Sidebar() {
     // @ts-ignore
     return (
         <aside
-            className="d-flex flex-column border-end bg-body h-100"
+            className="d-flex flex-column border-end bg-body vh-100"
             style={{ width: 300, minWidth: 300 }}
         >
-            <header className="d-flex align-items-center px-3 py-3 border-bottom">
+            <header className="d-flex align-items-center px-3 py-3 border-bottom flex-shrink-0">
                 <ChatDots size={22} className="text-primary me-2" />
                 <h5 className="mb-0 fw-semibold">Cuộc trò chuyện</h5>
             </header>
 
-            <div className="flex-grow-1 overflow-auto">
+            {/* Pinned: always visible, never scrolls */}
+            <div className="flex-shrink-0">
+                <SearchUser onSearch={checkUserExist} />
+                <CreateRoom />
+                <JoinRoom />
+            </div>
+
+            {/* Only this part scrolls */}
+            <div
+                className="flex-grow-1 overflow-auto hide-scrollbar"
+                style={{ minHeight: 0 }}
+            >
                 {loading ? (
                     <ListGroup variant="flush">
                         {Array.from({ length: 6 }, (_, i) => (
@@ -148,13 +160,6 @@ function Sidebar() {
                     </p>
                 ) : (
                     <ListGroup variant="flush">
-                        <div>
-                            <SearchUser onSearch={checkUserExist}/>
-                        </div>
-                        <div>
-                            <CreateRoom/>
-                            <JoinRoom/>
-                        </div>
                         {items.map((item) => {
                             const isRoom = item.type === 1;
                             const Icon = isRoom ? PeopleFill : PersonCircle;
@@ -181,9 +186,9 @@ function Sidebar() {
 
                                     <div className="flex-grow-1 overflow-hidden">
                                         <div className="d-flex justify-content-between align-items-baseline">
-                                            <span className="fw-semibold text-truncate">
-                                                {item.name}
-                                            </span>
+                                        <span className="fw-semibold text-truncate">
+                                            {item.name}
+                                        </span>
                                             <small className="text-muted ms-2 flex-shrink-0">
                                                 {formatTime(item.actionTime)}
                                             </small>
@@ -203,7 +208,7 @@ function Sidebar() {
                 )}
             </div>
 
-            <div>
+            <div className="flex-shrink-0 border-top px-3 py-2">
                 {isOnline ? "Online" : "Offline"}
             </div>
         </aside>
