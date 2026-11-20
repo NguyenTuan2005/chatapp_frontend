@@ -19,7 +19,8 @@ export function RoomInfoSidebar() {
     }
 
     const roomName = currentRoom.name ?? '';
-    const numberOfMember = currentRoom.user?.length ?? -999;
+    const numberOfMember = currentRoom.userList.length;
+    const userList = currentRoom.userList;
 
     return (
         <div className="bg-white border-start" style={{ width: '360px', height: '100vh', overflowY: 'auto' }}>
@@ -35,7 +36,7 @@ export function RoomInfoSidebar() {
             <div style={{ height: '8px', backgroundColor: '#F0F2F5' }}></div>
 
             <Accordion defaultActiveKey={['0', '1', '2']} alwaysOpen className="custom-accordion">
-                <AccordionManagementRoomMembers info={{ numberOfMember, roomName }} />
+                <AccordionManagementRoomMembers info={{ numberOfMember, roomName, userList }} />
 
                 <div style={{ height: '8px', backgroundColor: '#F0F2F5' }}></div>
 

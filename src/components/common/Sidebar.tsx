@@ -15,6 +15,7 @@ import CreateRoom from "../room/CreateRoom.tsx";
 import JoinRoom from "../room/JoinRoom.tsx";
 import {reLoginStorage} from "../../thunks/AuthThunk.ts";
 import {USER_KEY} from "../../config/WSEventsEnum.ts";
+import {useNavigate} from "react-router";
 
 const formatTime = (value: string) => {
     const d = new Date(value.replace(" ", "T"));
@@ -42,6 +43,8 @@ function Sidebar() {
     const loading = useAppSelector((state) => state.siderbar.loading);
     const isOnline = useAppSelector((state) => state.siderbar.isOnline);
     const currentUser = reLoginStorage.get(USER_KEY);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(getUserListThunk());
@@ -84,7 +87,8 @@ function Sidebar() {
 
                 const roomName = userSidebar.name;
                 dispatch(getRoomChatMesThunk({ name: roomName, page: 1 }))
-
+                navigate("/room")
+                
                 break;
             }
             case 0 : {
