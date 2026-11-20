@@ -11,6 +11,6 @@ export const SidebarService = {
         >(WS_EVENTS.GET_USER_LIST, {});
     },
     async checkUserOnline(user: string): Promise<boolean> {
-        return websocketService.request("CHECK_USER_ONLINE", { user });
+        return websocketService.request(WS_EVENTS.CHECK_USER_ONLINE, { user });
     }
 }
