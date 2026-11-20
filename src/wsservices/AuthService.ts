@@ -27,5 +27,12 @@ export const AuthService = {
         >(WS_EVENTS.RE_LOGIN, credentials);
 
         return RE_LOGIN_CODE;
+    },
+    async checkUserExist(user: string): Promise<boolean> {
+        const data = await websocketService.request<{ status: boolean }>(
+            WS_EVENTS.CHECK_USER_EXIST,
+            { user }
+        );
+        return data.status;
     }
 };

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import {Alert, ListGroup, Badge, Placeholder} from "react-bootstrap";
 import {
     ExclamationCircleFill,
@@ -13,9 +13,10 @@ import {getRoomChatMesThunk} from "../../thunks/RoomManagementThunk.ts";
 import {AvatarChatImage} from "./AvatarChatImage.tsx";
 import CreateRoom from "../room/CreateRoom.tsx";
 import JoinRoom from "../room/JoinRoom.tsx";
-import {reLoginStorage} from "../../thunks/AuthThunk.ts";
+import {checkUserExistThunk, reLoginStorage} from "../../thunks/AuthThunk.ts";
 import {USER_KEY} from "../../config/WSEventsEnum.ts";
 import {useNavigate} from "react-router";
+import SearchUser from "./SearchUser.tsx";
 
 const formatTime = (value: string) => {
     const d = new Date(value.replace(" ", "T"));
@@ -38,10 +39,10 @@ const SkeletonItem = () => (
 
 function Sidebar() {
     const dispatch = useAppDispatch();
-    const users = useAppSelector((state) => state.siderbar.users);
-    const error = useAppSelector((state) => state.siderbar.error);
-    const loading = useAppSelector((state) => state.siderbar.loading);
-    const isOnline = useAppSelector((state) => state.siderbar.isOnline);
+    const users = useAppSelector((state) => state.sidebar.users);
+    const error = useAppSelector((state) => state.sidebar.error);
+    const loading = useAppSelector((state) => state.sidebar.loading);
+    const isOnline = useAppSelector((state) => state.sidebar.isOnline);
     const currentUser = reLoginStorage.get(USER_KEY);
 
     const navigate = useNavigate();
@@ -69,6 +70,21 @@ function Sidebar() {
         };
     }, [dispatch, currentUser]);
 
+    const [searchedUser, setSearchedUser] = useState<string | null>(null);
+
+    const checkUserExist = async (username: string) => {
+        try {
+            const exists = await dispatch(checkUserExistThunk(username)).unwrap();
+            if (exists) {
+                setSearchedUser(username);
+                navigate(`/chat/${username}`);
+            }
+            return Boolean(exists);
+        } catch {
+            return false;
+        }
+    };
+
     if (error) {
         return (
             <Alert variant="danger" className="m-2 py-2 d-flex align-items-center">
@@ -79,6 +95,11 @@ function Sidebar() {
     }
 
     const sorted = [...users].sort((a, b) => b.actionTime.localeCompare(a.actionTime));
+
+    const items: UserSidebar[] =
+        searchedUser && !sorted.some((u) => u.type === 0 && u.name === searchedUser)
+            ? [{ name: searchedUser, type: 0, actionTime: new Date().toISOString() } as UserSidebar, ...sorted]
+            : sorted;
 
     const openChat = (userSidebar: UserSidebar) => {
 
@@ -121,17 +142,20 @@ function Sidebar() {
                             <SkeletonItem key={i} />
                         ))}
                     </ListGroup>
-                ) : sorted.length === 0 ? (
+                ) : items.length === 0 ? (
                     <p className="text-muted text-center small mt-4 px-3">
                         Chưa có cuộc trò chuyện nào hết, hãy tạo phòng hoặc tạo cuộc trò chuyện
                     </p>
                 ) : (
                     <ListGroup variant="flush">
                         <div>
+                            <SearchUser onSearch={checkUserExist}/>
+                        </div>
+                        <div>
                             <CreateRoom/>
                             <JoinRoom/>
                         </div>
-                        {sorted.map((item) => {
+                        {items.map((item) => {
                             const isRoom = item.type === 1;
                             const Icon = isRoom ? PeopleFill : PersonCircle;
 

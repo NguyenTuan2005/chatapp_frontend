@@ -43,3 +43,15 @@ export const reloginThunk = createAsyncThunk<
         return rejectWithValue(error instanceof Error ? error.message : "Relogin failed");
     }
 });
+
+export const checkUserExistThunk = createAsyncThunk<
+    boolean,
+    string,
+    { rejectValue: string }
+>("auth/checkUserExist", async (user: string, { rejectWithValue }) => {
+    try {
+        return await AuthService.checkUserExist(user);
+    } catch (error) {
+        return rejectWithValue(error instanceof Error ? error.message : "check user exist failed");
+    }
+});
