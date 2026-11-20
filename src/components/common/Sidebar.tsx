@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Alert, ListGroup, Badge, Placeholder } from "react-bootstrap";
+import {Alert, ListGroup, Badge, Placeholder} from "react-bootstrap";
 import {
     ExclamationCircleFill,
     PeopleFill,
@@ -7,12 +7,14 @@ import {
     ChatDots,
 } from "react-bootstrap-icons";
 import { useAppDispatch, useAppSelector } from "../../store/Store.ts";
-import { getUserListThunk } from "../../thunks/SidebarThunk.ts";
+import {checkUserOnlineThunk, getUserListThunk} from "../../thunks/SidebarThunk.ts";
 import type {UserSidebar} from "../../types/SiderbarData.ts";
 import {getRoomChatMesThunk} from "../../thunks/RoomManagementThunk.ts";
 import {AvatarChatImage} from "./AvatarChatImage.tsx";
 import CreateRoom from "../room/CreateRoom.tsx";
 import JoinRoom from "../room/JoinRoom.tsx";
+import {reLoginStorage} from "../../thunks/AuthThunk.ts";
+import {USER_KEY} from "../../config/WSEventsEnum.ts";
 import {useNavigate} from "react-router";
 
 const formatTime = (value: string) => {
@@ -39,12 +41,33 @@ function Sidebar() {
     const users = useAppSelector((state) => state.siderbar.users);
     const error = useAppSelector((state) => state.siderbar.error);
     const loading = useAppSelector((state) => state.siderbar.loading);
+    const isOnline = useAppSelector((state) => state.siderbar.isOnline);
+    const currentUser = reLoginStorage.get(USER_KEY);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(getUserListThunk());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (!currentUser) return;
+
+        let timer: ReturnType<typeof setTimeout>;
+        let stopped = false;
+
+        const poll = async () => {
+            await dispatch(checkUserOnlineThunk(currentUser)).catch(() => {});
+            if (!stopped) timer = setTimeout(poll, 40000);
+        };
+
+        poll();
+
+        return () => {
+            stopped = true;
+            clearTimeout(timer);
+        };
+    }, [dispatch, currentUser]);
 
     if (error) {
         return (
@@ -154,6 +177,10 @@ function Sidebar() {
                         })}
                     </ListGroup>
                 )}
+            </div>
+
+            <div>
+                {isOnline ? "Online" : "Offline"}
             </div>
         </aside>
     );
