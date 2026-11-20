@@ -31,7 +31,7 @@ const MessageList = ({ messages }: Props) => {
                     </div>
 
                     <h6 className="fw-semibold mb-1">
-                        Henry Feng 🐉
+
                     </h6>
 
                 </div>
