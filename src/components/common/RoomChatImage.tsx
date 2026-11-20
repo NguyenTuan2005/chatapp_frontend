@@ -26,3 +26,18 @@ export  function RoomChatImage({name} :RoomChatImagePros){
          />
     );
 }
+
+interface UserAvatarImagePros{
+    name: string
+}
+
+export function UserAvatarImage({name}: UserAvatarImagePros){
+    return(
+        <Image
+            src={getRoomAvatarUrl(name)}
+            alt={name}
+            roundedCircle
+            className="w-100 h-100 object-fit-cover"
+        />
+    );
+}

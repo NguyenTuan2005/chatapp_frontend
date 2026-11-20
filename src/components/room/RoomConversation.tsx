@@ -1,14 +1,13 @@
-// import {useState} from "react";
-
-
 import {RoomInfoSidebar} from "./RoomInfoSidebar.tsx";
 import {RoomHeader} from "./RoomHeader.tsx";
 import {useAppSelector} from "../../store/Store.ts";
 
+
 export function RoomConversation() {
     const room = useAppSelector(state => state.roomManagement.currentRoom);
-    const roomName = room ? room.name : "Error";
-    const membersCount = room?.user ? room?.user.length: -999;
+    const roomName = room ? room.name : "Loading";
+    const membersCount = room ? room.userList.length : 0;
+
     return (
         <div className="d-flex w-100 vh-100 overflow-hidden bg-light">
 
@@ -70,21 +69,7 @@ export function RoomConversation() {
                     </div>
                 </div>
 
-                <div className="bg-white border-top p-2 flex-shrink-0">
-                    <div className="d-flex align-items-center gap-2 px-2 py-1 text-secondary">
-                    </div>
-                    <div className="d-flex align-items-center px-2 py-1">
-                        <input
-                            type="text"
-                            className="form-control border-0 shadow-none px-1"
-                            placeholder="Nhập @, tin nhắn tới Quán cơm Cô Hương"
-                            style={{ fontSize: '0.95rem' }}
-                        />
-                        <button className="btn btn-link text-primary p-1 border-0 ms-2">
-                            hehe
-                        </button>
-                    </div>
-                </div>
+                {/*<MessageInput onSend={handleSendMessage} />*/}
             </div>
 
             <RoomInfoSidebar/>
