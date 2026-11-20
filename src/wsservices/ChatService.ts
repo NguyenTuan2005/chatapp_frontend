@@ -1,14 +1,12 @@
-import type {ChatMessageResponse} from "../types/Chat.ts";
+import type {ChatMessageResponse, SendChatResponse} from "../types/Chat.ts";
 import {websocketService} from "../config/Websocket.ts";
 import {ACTION_ON_CHAT, WS_EVENTS} from "../config/WSEventsEnum.ts";
 
 
 
 export const ChatService = {
-    async getPeopleMessages(
-        username: string,
-        page: number
-    ): Promise<ChatMessageResponse[]> {
+
+    async getPeopleMessages(username: string, page: number): Promise<ChatMessageResponse[]> {
 
         try {
             console.log("Sending GET_PEOPLE_CHAT_MES...");
@@ -39,10 +37,7 @@ export const ChatService = {
         }
     },
 
-    sendPeopleMessage(
-        recipientUsername: string,
-        content: string
-    ): void {
+    sendPeopleMessage(recipientUsername: string, content: string): void {
         websocketService.send({
             action: ACTION_ON_CHAT,
             data: {
@@ -54,5 +49,12 @@ export const ChatService = {
                 }
             }
         });
+    },
+
+    subscribeToIncomingMessages(callback: (message: SendChatResponse) => void) {
+        return websocketService.subscribe(
+            WS_EVENTS.SEND_CHAT,
+            (data) => callback(data as SendChatResponse)
+        );
     }
 };
