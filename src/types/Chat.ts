@@ -17,7 +17,7 @@ export interface ChatMessage {
     id: string | number;
     sender: string;
     content: string;
-    createdAt: Date;
+    createdAt: string;
     isMine: boolean;
 }
 

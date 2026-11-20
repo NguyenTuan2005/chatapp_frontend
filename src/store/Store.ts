@@ -5,6 +5,7 @@ import authSlice from "./slice/AuthSlice.ts";
 import sidebarSlice from "./slice/SidebarSlice.ts";
 
 import chatInfoSidebarSlice from "./slice/ChatInfoSidebarSlice.ts";
+import chatSlice from "./slice/ChatSlice.ts";
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         auth: authSlice,
         chatSidebar: chatInfoSidebarSlice,
         sidebar: sidebarSlice,
+        chat: chatSlice,
     },
 });
 

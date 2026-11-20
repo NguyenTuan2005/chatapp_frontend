@@ -1,0 +1,15 @@
+.chat-message-bubble {
+    width: fit-content;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.chat-message-bubble p {
+    margin: 0;
+}
+
+.chat-message-bubble ul,
+.chat-message-bubble ol {
+    margin: 0;
+    padding-left: 1.25rem;
+}
