@@ -1,6 +1,10 @@
+
 const TIME_ZONE = "Asia/Ho_Chi_Minh";
 
 export function parseChatDate(dateString: string): Date {
+    if (dateString.includes("T")) {
+        return new Date(dateString);
+    }
     const [datePart, timePart] = dateString.split(" ");
 
     if (!datePart || !timePart) {
@@ -10,7 +14,9 @@ export function parseChatDate(dateString: string): Date {
     return new Date(`${datePart}T${timePart}+07:00`);
 }
 
-export function getChatDateKey(date: Date): string {
+export function getChatDateKey(dateString: string): string {
+    const date = parseChatDate(dateString);
+
     const parts = new Intl.DateTimeFormat("en-CA", {
         timeZone: TIME_ZONE,
         year: "numeric",
@@ -25,21 +31,22 @@ export function getChatDateKey(date: Date): string {
     return `${values.year}-${values.month}-${values.day}`;
 }
 
-export function formatMessageTime(date: Date): string {
+export function formatMessageTime(dateString: string): string {
     return new Intl.DateTimeFormat("vi-VN", {
         timeZone: TIME_ZONE,
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
-    }).format(date);
+    }).format(parseChatDate(dateString));
 }
 
-export function formatMessageDate(date: Date): string {
-    const today = getChatDateKey(new Date());
-    const yesterdayDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const yesterday = getChatDateKey(yesterdayDate);
+export function formatMessageDate(dateString: string): string {
+    const today = getChatDateKey(new Date().toISOString());
 
-    const messageDate = getChatDateKey(date);
+    const yesterdayDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const yesterday = getChatDateKey(yesterdayDate.toISOString());
+
+    const messageDate = getChatDateKey(dateString);
 
     if (messageDate === today) {
         return "Hôm nay";
@@ -54,6 +61,5 @@ export function formatMessageDate(date: Date): string {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
-    }).format(date);
+    }).format(parseChatDate(dateString));
 }
-

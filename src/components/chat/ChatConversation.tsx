@@ -1,13 +1,15 @@
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList.tsx";
 import MessageInput from "./MessageInput.tsx";
-import {useEffect, useState} from "react";
-import type {ChatMessage, ChatMessageResponse} from "../../types/Chat.ts";
+import type {ChatMessage} from "../../types/Chat.ts";
 import {ChatService} from "../../wsservices/ChatService.ts";
-import {parseChatDate} from "../../utils/DateUtils.ts";
 import {USER_KEY} from "../../config/WSEventsEnum.ts";
 import {reLoginStorage} from "../../thunks/AuthThunk.ts";
 import {useParams} from "react-router";
+import {useAppDispatch, useAppSelector} from "../../store/Store.ts";
+import {addMessage, clearMessages} from "../../store/slice/ChatSlice.ts";
+import {useEffect} from "react";
+import {getPeopleMessagesThunk} from "../../thunks/ChatThunk.ts";
 
 const ChatConversation = () => {
 
@@ -15,57 +17,40 @@ const ChatConversation = () => {
 
     const currentUsername = reLoginStorage.get(USER_KEY);
 
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const dispatch = useAppDispatch();
+
+    const { messages, loading, error } = useAppSelector(
+        state => state.chat
+    );
 
     useEffect(() => {
-
         if (!recipientUsername || !currentUsername) {
             console.error("Missing username");
             return;
         }
 
-        console.log("1. Start loading messages");
+        dispatch(getPeopleMessagesThunk({
+            recipientUsername,
+            currentUsername,
+            page: 1
+        }));
 
-        const loadMessages = async () => {
-            try {
-
-                console.log("Current user:", currentUsername);
-                console.log("Chat with:", recipientUsername);
-
-                const response = await ChatService.getPeopleMessages(recipientUsername, 1);
-
-
-                console.log("2. Chat messages:", response);
-
-
-                const chatMessages: ChatMessage[] = response
-                    .map(message => (
-                        mapChatMessage(message, currentUsername)
-                    ))
-                    .sort((a, b) =>
-                        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                    );
-
-
-                setMessages(chatMessages);
-
-            } catch (error) {
-                console.error("Cannot load chat messages:", error);
-            }
+        return () => {
+            dispatch(clearMessages());
         };
-
-        loadMessages();
-    }, []);
+    }, [recipientUsername, currentUsername, dispatch]);
 
     useEffect(() => {
         if (!recipientUsername || !currentUsername) return;
 
         const unsubscribe = ChatService.subscribeToIncomingMessages(
-            (message) => {
+            message => {
                 console.log("[Chat] Incoming message:", message);
 
-
-                if (message.to !== currentUsername || message.name !== recipientUsername) {
+                if (
+                    message.to !== currentUsername ||
+                    message.name !== recipientUsername
+                ) {
                     return;
                 }
 
@@ -73,17 +58,16 @@ const ChatConversation = () => {
                     id: crypto.randomUUID(),
                     sender: message.name,
                     content: message.mes,
-                    createdAt: new Date(),
+                    createdAt: new Date().toISOString(),
                     isMine: false
                 };
 
-                setMessages(prev => [...prev, newMessage]);
+                dispatch(addMessage(newMessage));
             }
         );
 
         return unsubscribe;
-    }, [recipientUsername, currentUsername]);
-
+    }, [recipientUsername, currentUsername, dispatch]);
 
     const handleSendMessage = (content: string): void => {
         if (!recipientUsername || !currentUsername) {
@@ -101,11 +85,11 @@ const ChatConversation = () => {
                 id: crypto.randomUUID(),
                 sender: currentUsername,
                 content,
-                createdAt: new Date(),
+                createdAt: new Date().toISOString(),
                 isMine: true
             };
 
-            setMessages(prev => [...prev, newMessage]);
+            dispatch(addMessage(newMessage));
 
         } catch (error) {
             console.error("Send message failed:", error);
@@ -118,6 +102,18 @@ const ChatConversation = () => {
 
             <ChatHeader />
 
+            {loading && (
+                <div className="text-center p-3">
+                    Đang tải tin nhắn...
+                </div>
+            )}
+
+            {error && (
+                <div className="text-danger text-center p-3">
+                    {error}
+                </div>
+            )}
+
             <MessageList messages={messages} />
 
             <MessageInput onSend={handleSendMessage} />
@@ -128,16 +124,3 @@ const ChatConversation = () => {
 
 export default ChatConversation;
 
-
-export function mapChatMessage(
-    message: ChatMessageResponse,
-    currentUsername: string
-): ChatMessage {
-    return {
-        id: message.id,
-        sender: message.name,
-        content: message.mes,
-        createdAt: parseChatDate(message.createAt),
-        isMine: message.name === currentUsername,
-    };
-}
