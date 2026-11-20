@@ -2,11 +2,13 @@ import {createBrowserRouter, Navigate, Outlet} from 'react-router';
 import NotFound from "../components/common/NotFound.tsx";
 import Login from "../pages/Login.tsx";
 import MainLayout from "../layouts/MainLayout.tsx";
-import {RoomConversation} from "../components/room/RoomConversation.tsx";
 import {useAppSelector} from "../store/Store.ts";
 import Hehe from "../pages/Test.tsx";
 import AppSkeleton from "../components/common/AppSkeleton.tsx";
 import ChatPage from "../pages/ChatPage.tsx";
+import {DefaultChat} from "../pages/DefaultChat.tsx";
+import {RoomConversation} from "../components/room/RoomConversation.tsx";
+import {ConfirmationJoinRoom} from "../pages/ConfirmationJoinRoom.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -24,7 +26,9 @@ export const router = createBrowserRouter([
             {
                 element: <MainLayout/>,
                 children: [
-                    { path: "/", element: <RoomConversation/>},
+                    { path: "/", element: <DefaultChat/>},
+                    {path : "/room",element: <RoomConversation/>},
+                    {path : "/join-room/confirmation/:roomName", element: <ConfirmationJoinRoom/>},
                     {path: "/chat/:username", element: <ChatPage/>}
                 ]
             }

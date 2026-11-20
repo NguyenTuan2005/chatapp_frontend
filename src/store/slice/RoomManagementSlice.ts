@@ -11,7 +11,7 @@ import {
 
 export interface RoomManagementState {
     rooms: Room[];
-    userList: UserListItem[];
+    users: UserListItem[];
     currentRoom: Room | null;
     loading: boolean;
     sendingMessage: boolean;
@@ -20,7 +20,7 @@ export interface RoomManagementState {
 
 const initialState: RoomManagementState = {
     rooms: [],
-    userList: [],
+    users: [],
     currentRoom: null,
     loading: false,
     sendingMessage: false,
@@ -74,7 +74,7 @@ const roomManagementSlice = createSlice({
 
         reset: (state) => {
             state.rooms = [];
-            state.userList = [];
+            state.users = [];
             state.currentRoom = null;
             state.loading = false;
             state.sendingMessage = false;
@@ -190,7 +190,7 @@ const roomManagementSlice = createSlice({
             })
             .addCase(getUserListThunk.fulfilled, (state, action) => {
                 state.loading = false;
-                state.userList = action.payload;
+                state.users = action.payload;
             })
             .addCase(getUserListThunk.rejected, (state, action) => {
                 state.loading = false;
