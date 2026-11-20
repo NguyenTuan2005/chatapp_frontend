@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 
 
-import {MessageDateSeparator} from "./MessageSeparator.tsx";
 import type {ChatMessage} from "../../types/Chat.ts";
-import MessageItem from "./MessageItem.tsx";
-import {formatMessageDate, getChatDateKey} from "../../utils/DateUtils.ts";
+import { getChatDateKey} from "../../utils/DateUtils.ts";
+import {ChatMessageFactory} from "../../utils/ChatMassageFacatory.tsx";
+import {getChatMessageType} from "../../utils/MessageTypeDetector.ts";
 
 
 interface Props {
@@ -45,16 +45,13 @@ const MessageList = ({ messages }: Props) => {
                             getChatDateKey(previousMessage.createdAt) !==
                             getChatDateKey(message.createdAt);
 
-                        return (
-                            <div key={message.id}>
-                                {showDateSeparator && (
-                                    <MessageDateSeparator
-                                        date={formatMessageDate(message.createdAt)}
-                                    />
-                                )}
+                        const type = getChatMessageType(message.content);
 
-                                <MessageItem message={message} />
-                            </div>
+                        return(
+                            <ChatMessageFactory
+                                type={type}
+                                       chatMessage={message}
+                                                showDateSeparator={showDateSeparator} />
                         );
                     })}
                 </div>

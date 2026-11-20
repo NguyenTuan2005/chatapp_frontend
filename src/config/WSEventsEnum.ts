@@ -35,3 +35,12 @@ export const WS_DESTINATIONS = {
     CREATE_ROOM: "/app/chat.createRoom",
     ROOM_RESPONSE: "/topic/messages",
 }
+
+// @ts-ignore
+export enum ChatMessageType {
+    PREVIEW_LINK = "PREVIEW_LINK",
+    JOIN_ROOM_LINK = "JOIN_ROOM_LINK",
+    TEXT = "TEXT",
+    ICON = "ICON",
+    IMAGE = "IMAGE",
+}
