@@ -7,7 +7,8 @@ import CreateRoom from "../components/room/CreateRoom.tsx";
 import {OutRoom} from "../components/room/OutRoom.tsx";
 import {RoomChatImage} from "../components/common/RoomChatImage.tsx";
 import {JoinRoom} from "../components/room/JoinRoom.tsx";
-import LinkPreviewMessage from "../components/custom_message/CustomMessage.tsx";
+import { LinkPreviewMessage } from "../components/custom_message/CustomMessage.tsx";
+
 
 function Hehe() {
 
