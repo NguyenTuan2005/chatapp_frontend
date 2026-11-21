@@ -40,6 +40,8 @@ const ChatConversation = () => {
         };
     }, [recipientUsername, currentUsername, dispatch]);
 
+
+
     useEffect(() => {
         if (!recipientUsername || !currentUsername) return;
 
@@ -100,7 +102,7 @@ const ChatConversation = () => {
     return (
         <section className="chat-conversation d-flex flex-column">
 
-            <ChatHeader />
+            <ChatHeader username={recipientUsername ?? ""}/>
 
             {loading && (
                 <div className="text-center p-3">

@@ -6,19 +6,25 @@ import type {ChatMessage} from "../../types/Chat.ts";
 
 export interface TextMessageProps {
     message: ChatMessage;
+    showSender?: boolean;
     showDateSeparator: boolean;
 }
 
-export function TextMessage({ message, showDateSeparator }: TextMessageProps) {
+export function TextMessage({ message, showSender, showDateSeparator }: TextMessageProps) {
 
 
     return (
-        <div>
+        <div key={message.id}>
             {showDateSeparator && (
-                <MessageDateSeparator date={formatMessageDate(message.createdAt)} />
+                <MessageDateSeparator
+                    date={formatMessageDate(message.createdAt)}
+                />
             )}
 
-            <MessageItem message={message} />
+            <MessageItem
+                message={message}
+                showSender={showSender}
+            />
         </div>
     );
 }
