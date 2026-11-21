@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import {Alert, ListGroup, Badge, Placeholder} from "react-bootstrap";
 import {
     ExclamationCircleFill,
@@ -13,9 +13,11 @@ import {getRoomChatMesThunk} from "../../thunks/RoomManagementThunk.ts";
 import {AvatarChatImage} from "./AvatarChatImage.tsx";
 import CreateRoom from "../room/CreateRoom.tsx";
 import JoinRoom from "../room/JoinRoom.tsx";
-import {reLoginStorage} from "../../thunks/AuthThunk.ts";
+import {checkUserExistThunk, reLoginStorage} from "../../thunks/AuthThunk.ts";
 import {USER_KEY} from "../../config/WSEventsEnum.ts";
 import {useNavigate} from "react-router";
+import SearchUser from "./SearchUser.tsx";
+import "../../styles/sidebar.css";
 
 const formatTime = (value: string) => {
     const d = new Date(value.replace(" ", "T"));
@@ -38,10 +40,10 @@ const SkeletonItem = () => (
 
 function Sidebar() {
     const dispatch = useAppDispatch();
-    const users = useAppSelector((state) => state.siderbar.users);
-    const error = useAppSelector((state) => state.siderbar.error);
-    const loading = useAppSelector((state) => state.siderbar.loading);
-    const isOnline = useAppSelector((state) => state.siderbar.isOnline);
+    const users = useAppSelector((state) => state.sidebar.users);
+    const error = useAppSelector((state) => state.sidebar.error);
+    const loading = useAppSelector((state) => state.sidebar.loading);
+    const isOnline = useAppSelector((state) => state.sidebar.isOnline);
     const currentUser = reLoginStorage.get(USER_KEY);
 
     const navigate = useNavigate();
@@ -69,6 +71,21 @@ function Sidebar() {
         };
     }, [dispatch, currentUser]);
 
+    const [searchedUser, setSearchedUser] = useState<string | null>(null);
+
+    const checkUserExist = async (username: string) => {
+        try {
+            const exists = await dispatch(checkUserExistThunk(username)).unwrap();
+            if (exists) {
+                setSearchedUser(username);
+                navigate(`/chat/${username}`);
+            }
+            return Boolean(exists);
+        } catch {
+            return false;
+        }
+    };
+
     if (error) {
         return (
             <Alert variant="danger" className="m-2 py-2 d-flex align-items-center">
@@ -79,6 +96,11 @@ function Sidebar() {
     }
 
     const sorted = [...users].sort((a, b) => b.actionTime.localeCompare(a.actionTime));
+
+    const items: UserSidebar[] =
+        searchedUser && !sorted.some((u) => u.type === 0 && u.name === searchedUser)
+            ? [{ name: searchedUser, type: 0, actionTime: new Date().toISOString() } as UserSidebar, ...sorted]
+            : sorted;
 
     const openChat = (userSidebar: UserSidebar) => {
         const conversationName = userSidebar.name;
@@ -103,32 +125,39 @@ function Sidebar() {
     // @ts-ignore
     return (
         <aside
-            className="d-flex flex-column border-end bg-body h-100"
+            className="d-flex flex-column border-end bg-body vh-100"
             style={{ width: 300, minWidth: 300 }}
         >
-            <header className="d-flex align-items-center px-3 py-3 border-bottom">
+            <header className="d-flex align-items-center px-3 py-3 border-bottom flex-shrink-0">
                 <ChatDots size={22} className="text-primary me-2" />
                 <h5 className="mb-0 fw-semibold">Cuộc trò chuyện</h5>
             </header>
 
-            <div className="flex-grow-1 overflow-auto">
+            {/* Pinned: always visible, never scrolls */}
+            <div className="flex-shrink-0">
+                <SearchUser onSearch={checkUserExist} />
+                <CreateRoom />
+                <JoinRoom />
+            </div>
+
+            {/* Only this part scrolls */}
+            <div
+                className="flex-grow-1 overflow-auto hide-scrollbar"
+                style={{ minHeight: 0 }}
+            >
                 {loading ? (
                     <ListGroup variant="flush">
                         {Array.from({ length: 6 }, (_, i) => (
                             <SkeletonItem key={i} />
                         ))}
                     </ListGroup>
-                ) : sorted.length === 0 ? (
+                ) : items.length === 0 ? (
                     <p className="text-muted text-center small mt-4 px-3">
                         Chưa có cuộc trò chuyện nào hết, hãy tạo phòng hoặc tạo cuộc trò chuyện
                     </p>
                 ) : (
                     <ListGroup variant="flush">
-                        <div>
-                            <CreateRoom/>
-                            <JoinRoom/>
-                        </div>
-                        {sorted.map((item) => {
+                        {items.map((item) => {
                             const isRoom = item.type === 1;
                             const Icon = isRoom ? PeopleFill : PersonCircle;
 
@@ -154,9 +183,9 @@ function Sidebar() {
 
                                     <div className="flex-grow-1 overflow-hidden">
                                         <div className="d-flex justify-content-between align-items-baseline">
-                                            <span className="fw-semibold text-truncate">
-                                                {item.name}
-                                            </span>
+                                        <span className="fw-semibold text-truncate">
+                                            {item.name}
+                                        </span>
                                             <small className="text-muted ms-2 flex-shrink-0">
                                                 {formatTime(item.actionTime)}
                                             </small>
@@ -176,7 +205,7 @@ function Sidebar() {
                 )}
             </div>
 
-            <div>
+            <div className="flex-shrink-0 border-top px-3 py-2">
                 {isOnline ? "Online" : "Offline"}
             </div>
         </aside>

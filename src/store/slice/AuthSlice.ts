@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {loginThunk, reLoginStorage, reloginThunk} from "../../thunks/AuthThunk.ts";
+import {checkUserExistThunk, loginThunk, reLoginStorage, reloginThunk} from "../../thunks/AuthThunk.ts";
 import {KEY, USER_KEY} from "../../config/WSEventsEnum.ts";
 
 interface AuthState {
@@ -8,6 +8,7 @@ interface AuthState {
     error: string | null;
     loading: boolean;
     relogin: boolean;
+    isExist: boolean;
 }
 
 const reLoginCode = reLoginStorage.get(KEY);
@@ -17,7 +18,8 @@ const initialState: AuthState = {
     reLoginCode: reLoginCode,
     error: null,
     loading: false,
-    relogin: reLoginCode != null
+    relogin: reLoginCode != null,
+    isExist: false
 }
 
 const authSlice = createSlice({
@@ -64,6 +66,21 @@ const authSlice = createSlice({
                 state.isAuthenticated = false;
                 state.reLoginCode = null;
                 state.error = action.payload ?? "Relogin failed";
+            });
+        builder
+            .addCase(checkUserExistThunk.pending, (state) => {
+                state.error = null;
+                state.loading = true;
+                state.isExist = false;
+            })
+            .addCase(checkUserExistThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isExist = action.payload;
+            })
+            .addCase(checkUserExistThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.isExist = false;
+                state.error = action.payload ?? "Check user failed";
             });
     },
 });

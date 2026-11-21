@@ -12,7 +12,7 @@ export const store = configureStore({
         roomManagement: roomManagementReducer,
         auth: authSlice,
         chatSidebar: chatInfoSidebarSlice,
-        siderbar: sidebarSlice,
+        sidebar: sidebarSlice,
         chat: chatSlice,
     },
 });

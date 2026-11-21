@@ -1,12 +1,9 @@
+import {useEffect, useRef} from "react";
+import type {ChatMessage} from "../../types/Chat.ts";
+import {getChatDateKey} from "../../utils/DateUtils.ts";
+import {getChatMessageType} from "../../utils/MessageTypeDetector.ts";
+import {ChatMessageFactory} from "../../utils/ChatMassageFacatory.tsx";
 
-import { useEffect, useRef } from "react";
-import { MessageDateSeparator } from "./MessageSeparator.tsx";
-import type { ChatMessage } from "../../types/Chat.ts";
-import MessageItem from "./MessageItem.tsx";
-import {
-    formatMessageDate,
-    getChatDateKey
-} from "../../utils/DateUtils.ts";
 
 interface Props {
     messages: ChatMessage[];
@@ -35,16 +32,14 @@ const MessageList = ({messages, showSender = false}: Props) => {
                             getChatDateKey(previousMessage.createdAt) !==
                             getChatDateKey(message.createdAt);
 
+                        const type = getChatMessageType(message.content);
+
                         return (
                             <div key={message.id}>
-                                {showDateSeparator && (
-                                    <MessageDateSeparator
-                                        date={formatMessageDate(message.createdAt)}
-                                    />
-                                )}
-
-                                <MessageItem
-                                    message={message}
+                                <ChatMessageFactory
+                                    type={type}
+                                    chatMessage={message}
+                                    showDateSeparator={showDateSeparator}
                                     showSender={showSender}
                                 />
                             </div>
@@ -52,7 +47,7 @@ const MessageList = ({messages, showSender = false}: Props) => {
                     })}
                 </div>
 
-                <div ref={bottomRef} />
+                <div ref={bottomRef}/>
             </div>
         </main>
     );
