@@ -5,14 +5,6 @@ export interface User {
     isOnline: boolean;
 }
 
-export interface Conversation {
-    id: string;
-    user: User;
-    lastMessage: string;
-    updatedAt: string;
-    unreadCount: number;
-}
-
 export interface ChatMessage {
     id: string | number;
     sender: string;
@@ -30,11 +22,6 @@ export interface ChatMessageResponse {
     type: number;
 }
 
-export interface SendChatRequest {
-    type: "people";
-    to: string;
-    mes: string;
-}
 
 export interface SendChatResponse {
     name: string;

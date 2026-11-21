@@ -17,7 +17,7 @@ export interface RoomChatMessage {
 export interface Room {
     name: string;
     userList: RoomMember[];
-    chatMess: RoomChatMessage[];
+    chatData: RoomChatMessage[];
 }
 
 export interface UserListItem {

@@ -81,21 +81,18 @@ function Sidebar() {
     const sorted = [...users].sort((a, b) => b.actionTime.localeCompare(a.actionTime));
 
     const openChat = (userSidebar: UserSidebar) => {
+        const conversationName = userSidebar.name;
 
         switch (userSidebar.type) {
             case 1 : {
 
-                const roomName = userSidebar.name;
-                dispatch(getRoomChatMesThunk({ name: roomName, page: 1 }))
-                navigate("/room")
-                
+                dispatch(getRoomChatMesThunk({ name: conversationName, page: 1 }))
+                navigate(`/chat/room/${conversationName}`)
                 break;
             }
             case 0 : {
 
-                const username = userSidebar.name;
-                navigate(`/chat/${username}`)
-
+                navigate(`/chat/people/${conversationName}`)
                 break;
             }
             default:

@@ -5,7 +5,7 @@ import MainLayout from "../layouts/MainLayout.tsx";
 import {useAppSelector} from "../store/Store.ts";
 import Hehe from "../pages/Test.tsx";
 import AppSkeleton from "../components/common/AppSkeleton.tsx";
-import ChatPage from "../pages/ChatPage.tsx";
+import PeopleChatPage from "../pages/PeopleChatPage.tsx";
 import {DefaultChat} from "../pages/DefaultChat.tsx";
 import {RoomConversation} from "../components/room/RoomConversation.tsx";
 import {ConfirmationJoinRoom} from "../pages/ConfirmationJoinRoom.tsx";
@@ -27,9 +27,9 @@ export const router = createBrowserRouter([
                 element: <MainLayout/>,
                 children: [
                     { path: "/", element: <DefaultChat/>},
-                    {path : "/room",element: <RoomConversation/>},
+                    {path : "/chat/room/:roomName", element: <RoomConversation/>},
                     {path : "/join-room/confirmation/:roomName", element: <ConfirmationJoinRoom/>},
-                    {path: "/chat/:username", element: <ChatPage/>}
+                    {path: "/chat/people/:username", element: <PeopleChatPage/>}
                 ]
             }
         ]
