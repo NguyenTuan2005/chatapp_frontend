@@ -47,24 +47,13 @@ const roomManagementSlice = createSlice({
         },
 
         addMessageToCurrentRoom: (state, action: PayloadAction<RoomChatMessage>) => {
-            if (state.currentRoom && state.currentRoom.name === action.payload.to) {
-                const exists = action.payload.id
-                    ? state.currentRoom.chatMess.some((m) => m.id === action.payload.id)
-                    : false;
+            const targetRoom =
+                state.currentRoom?.name === action.payload.to
+                    ? state.currentRoom
+                    : state.rooms.find(room => room.name === action.payload.to);
 
-                if (!exists) {
-                    state.currentRoom.chatMess.push(action.payload);
-                }
-            }
-
-            const targetRoom = state.rooms.find((r) => r.name === action.payload.to);
             if (targetRoom) {
-                const exists = action.payload.id
-                    ? targetRoom.chatMess.some((m) => m.id === action.payload.id)
-                    : false;
-                if (!exists) {
-                    targetRoom.chatMess.push(action.payload);
-                }
+                targetRoom.chatData.push(action.payload);
             }
         },
 
@@ -164,18 +153,8 @@ const roomManagementSlice = createSlice({
                 state.sendingMessage = true;
                 state.error = null;
             })
-            .addCase(sendRoomChatThunk.fulfilled, (state, action) => {
+            .addCase(sendRoomChatThunk.fulfilled, (state) => {
                 state.sendingMessage = false;
-                const newMsg: RoomChatMessage = {
-                    name: action.payload.name,
-                    to: action.payload.to,
-                    mes: action.payload.mes,
-                    type: action.payload.type,
-                    createAt: new Date().toISOString(),
-                };
-                if (state.currentRoom && state.currentRoom.name === action.payload.to) {
-                    state.currentRoom.chatMess.push(newMsg);
-                }
             })
             .addCase(sendRoomChatThunk.rejected, (state, action) => {
                 state.sendingMessage = false;

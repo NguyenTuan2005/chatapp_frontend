@@ -1,12 +1,17 @@
 import {RoomInfoSidebar} from "./RoomInfoSidebar.tsx";
 import {RoomHeader} from "./RoomHeader.tsx";
-import {useAppSelector} from "../../store/Store.ts";
+import {useAppDispatch, useAppSelector} from "../../store/Store.ts";
 import {USER_KEY} from "../../config/WSEventsEnum.ts";
 import {reLoginStorage} from "../../thunks/AuthThunk.ts";
-import {useMemo} from "react";
+import {useEffect, useMemo} from "react";
 import type {ChatMessage} from "../../types/Chat.ts";
 import {parseChatDate} from "../../utils/DateUtils.ts";
 import MessageList from "../chat/MessageList.tsx";
+import MessageInput from "../chat/MessageInput.tsx";
+import {RoomManagementService} from "../../wsservices/RoomManagementService.ts";
+import type {RoomChatMessage, SendRoomChatResponseData} from "../../types/RoomManagementData.ts";
+import {addMessageToCurrentRoom} from "../../store/slice/RoomManagementSlice.ts";
+import {sendRoomChatThunk} from "../../thunks/RoomManagementThunk.ts";
 
 
 export function RoomConversation() {
@@ -57,6 +62,46 @@ export function RoomConversation() {
     }, [room?.chatData, currentUsername]);
 
 
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        const unsubscribe = RoomManagementService.onRoomMessage(
+            (response: SendRoomChatResponseData) => {
+                const newMessage = {
+                    name: response.name,
+                    to: response.to,
+                    mes: response.mes,
+                    type: response.type,
+                    createAt: new Date().toISOString(),
+                };
+
+                dispatch(addMessageToCurrentRoom(newMessage));
+            }
+        );
+
+        return unsubscribe;
+    }, [dispatch]);
+
+    const handleSendMessage = (content: string): void => {
+        if (!room?.name) return;
+
+        const newMessage: RoomChatMessage = {
+            id: crypto.randomUUID(),
+            name: currentUsername,
+            to: room.name,
+            mes: content,
+            type: 1,
+            createAt: new Date().toISOString(),
+        };
+
+        dispatch(addMessageToCurrentRoom(newMessage));
+
+        dispatch(sendRoomChatThunk({
+            roomName: room.name,
+            mes: content
+        }));
+    }
+
     return (
         <div className="d-flex w-100 vh-100 overflow-hidden bg-light">
 
@@ -77,6 +122,8 @@ export function RoomConversation() {
                 ) : (
                     <MessageList messages={messages} showSender={true}/>
                 )}
+
+                <MessageInput onSend={handleSendMessage} />
 
             </div>
 
