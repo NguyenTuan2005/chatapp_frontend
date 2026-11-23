@@ -1,17 +1,23 @@
+interface ChatHeaderProps {
+    username: string;
+}
 
-const ChatHeader = () => {
+const ChatHeader = ({username}:ChatHeaderProps) => {
+
+    const firstCharUsername = username?.trim()?.charAt(0).toUpperCase() || "?";
+
     return (
         <header className="chat-header d-flex align-items-center justify-content-between px-4">
 
             <div className="d-flex align-items-center gap-3">
                 <div className="chat-user-avatar">
-                    T
+                    {firstCharUsername}
                     <span className="chat-online-indicator"></span>
                 </div>
 
                 <div>
                     <h6 className="mb-1 fw-semibold">
-                        Ti Nguyễn
+                        {username}
                     </h6>
 
                     <small className="text-muted">
