@@ -9,7 +9,6 @@ import {
 import { useAppDispatch, useAppSelector } from "../../store/Store.ts";
 import {checkUserOnlineThunk, getUserListThunk} from "../../thunks/SidebarThunk.ts";
 import type {UserSidebar} from "../../types/SiderbarData.ts";
-import {getRoomChatMesThunk} from "../../thunks/RoomManagementThunk.ts";
 import {AvatarChatImage} from "./AvatarChatImage.tsx";
 import CreateRoom from "../room/CreateRoom.tsx";
 import JoinRoom from "../room/JoinRoom.tsx";
@@ -108,7 +107,6 @@ function Sidebar() {
         switch (userSidebar.type) {
             case 1 : {
 
-                dispatch(getRoomChatMesThunk({ name: conversationName, page: 1 }))
                 navigate(`/chat/room/${conversationName}`)
                 break;
             }
