@@ -9,7 +9,7 @@ import {
     LockFill,
     PersonFill,
 } from "react-bootstrap-icons";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { loginThunk } from "../thunks/AuthThunk.ts";
 import { useAppDispatch, useAppSelector } from "../store/Store.ts";
 
@@ -117,6 +117,10 @@ function Login() {
                                     )}
                                 </Button>
                             </Form>
+
+                            <p className="text-center text-muted mt-4 mb-0">
+                                Chưa có tài khoản? <Link to="/register">Đăng ký</Link>
+                            </p>
                         </Card.Body>
                     </Card>
                 </Col>

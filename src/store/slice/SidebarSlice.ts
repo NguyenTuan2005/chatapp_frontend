@@ -1,4 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
+import type {PayloadAction} from "@reduxjs/toolkit";
 import type {UserSidebar} from "../../types/SiderbarData.ts";
 import {checkUserOnlineThunk, getUserListThunk} from "../../thunks/SidebarThunk.ts";
 
@@ -7,20 +8,47 @@ interface SidebarState {
     error: string | null;
     loading: boolean;
     isOnline: boolean;
+    collapsed: boolean;
 }
+
+const COLLAPSED_KEY = "sidebar_collapsed";
+
+const readCollapsed = (): boolean => {
+    try {
+        return localStorage.getItem(COLLAPSED_KEY) === "true";
+    } catch {
+        return false;
+    }
+};
+
+const saveCollapsed = (value: boolean) => {
+    try {
+        localStorage.setItem(COLLAPSED_KEY, String(value));
+    } catch {
+        return;
+    }
+};
 
 const initialState: SidebarState = {
     users: [],
     error: null,
     loading: false,
-    isOnline: false
+    isOnline: false,
+    collapsed: readCollapsed()
 }
 
 const sidebarSlice = createSlice({
     name: "sidebar",
     initialState,
     reducers: {
-
+        toggleSidebar: (state) => {
+            state.collapsed = !state.collapsed;
+            saveCollapsed(state.collapsed);
+        },
+        setSidebarCollapsed: (state, action: PayloadAction<boolean>) => {
+            state.collapsed = action.payload;
+            saveCollapsed(state.collapsed);
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -43,11 +71,11 @@ const sidebarSlice = createSlice({
             .addCase(checkUserOnlineThunk.fulfilled, (state, action) => {
                 state.isOnline = action.payload;
             })
-            .addCase(checkUserOnlineThunk.rejected, (state, action) => {
-                state.error = action.payload ?? "get user list failed";
+            .addCase(checkUserOnlineThunk.rejected, (state) => {
+                state.isOnline = false;
             });
     },
 })
 
-export const {} = sidebarSlice.actions;
+export const {toggleSidebar, setSidebarCollapsed} = sidebarSlice.actions;
 export default sidebarSlice.reducer;
