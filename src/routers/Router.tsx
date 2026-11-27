@@ -3,7 +3,6 @@ import NotFound from "../components/common/NotFound.tsx";
 import Login from "../pages/Login.tsx";
 import MainLayout from "../layouts/MainLayout.tsx";
 import {useAppSelector} from "../store/Store.ts";
-import Hehe from "../pages/Test.tsx";
 import AppSkeleton from "../components/common/AppSkeleton.tsx";
 import PeopleChatPage from "../pages/PeopleChatPage.tsx";
 import {DefaultChat} from "../pages/DefaultChat.tsx";
@@ -18,7 +17,6 @@ export const router = createBrowserRouter([
                 path: "*",
                 element: <NotFound/>
             },
-            {path: "/hehe", element: <Hehe/>}
         ]
     },
     {
