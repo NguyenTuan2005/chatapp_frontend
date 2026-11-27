@@ -8,16 +8,19 @@ import {getRoomAvatarUrl} from "../components/common/RoomChatImage.tsx";
 import {TextMessage} from "../components/custom_message/TextMessage.tsx";
 import {HtmlMessage} from "../components/custom_message/HtmlMessage.tsx";
 
-export interface ChatMessageFactoryPros {
+export interface ChatMessageFactoryProps {
     type: ChatMessageType;
     chatMessage: ChatMessage;
     showDateSeparator: boolean;
+    showSender?: boolean;
 }
 
 export function ChatMessageFactory({
-                                       type,
-                                       chatMessage,showDateSeparator
-                                   }: ChatMessageFactoryPros): ReactNode {
+   type,
+   chatMessage,
+   showDateSeparator,
+   showSender,
+}: ChatMessageFactoryProps): ReactNode {
 
     switch (type) {
         case ChatMessageType.PREVIEW_LINK: {
@@ -40,7 +43,7 @@ export function ChatMessageFactory({
         }
 
         case ChatMessageType.TEXT:
-            return <TextMessage message={chatMessage} showDateSeparator={showDateSeparator} />;
+            return <TextMessage message={chatMessage} showSender={showSender} showDateSeparator={showDateSeparator} />;
 
         case ChatMessageType.ICON: {
 

@@ -54,7 +54,11 @@ export const RoomManagementService = {
         await websocketService.connect();
         return await websocketService.request<SendRoomChatResponseData, SendRoomChatData>(
             WS_EVENTS.SEND_CHAT,
-            { type: "room", to: roomName, mes }
+            {
+                type: "room",
+                to: roomName,
+                mes
+            }
         );
     },
 
@@ -62,6 +66,17 @@ export const RoomManagementService = {
         await websocketService.connect();
         return await websocketService.request<UserListItem[]>(
             WS_EVENTS.GET_USER_LIST, undefined
+        );
+    },
+
+    onRoomMessage(
+        callback: (message: SendRoomChatResponseData) => void
+    ): () => void {
+        return websocketService.subscribe(
+            WS_EVENTS.SEND_CHAT,
+            (data) => {
+                callback(data as SendRoomChatResponseData);
+            }
         );
     },
 

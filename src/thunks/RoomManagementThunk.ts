@@ -1,10 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RoomManagementService } from "../wsservices/RoomManagementService.ts";
-import type {
-    Room,
-    SendRoomChatResponseData,
-    UserListItem,
-} from "../types/RoomManagementData.ts";
+import type {Room, UserListItem} from "../types/RoomManagementData.ts";
 
 export const createRoomThunk = createAsyncThunk<
     Room,
@@ -71,13 +67,12 @@ export const getRoomChatMesThunk = createAsyncThunk<
 });
 
 export const sendRoomChatThunk = createAsyncThunk<
-    SendRoomChatResponseData,
+    void,
     { roomName: string; mes: string },
     { rejectValue: string }
 >("roomManagement/sendRoomChat", async ({ roomName, mes }, { rejectWithValue }) => {
     try {
-
-        return await RoomManagementService.sendRoomChat(roomName, mes);
+        await RoomManagementService.sendRoomChat(roomName, mes);
     } catch (error) {
         return rejectWithValue(
             error instanceof Error ? error.message : "Send room chat message failed"

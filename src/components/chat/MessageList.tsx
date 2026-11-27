@@ -1,17 +1,16 @@
-import { useEffect, useRef } from "react";
-
-
+import {useEffect, useRef} from "react";
 import type {ChatMessage} from "../../types/Chat.ts";
-import { getChatDateKey} from "../../utils/DateUtils.ts";
-import {ChatMessageFactory} from "../../utils/ChatMassageFacatory.tsx";
+import {getChatDateKey} from "../../utils/DateUtils.ts";
 import {getChatMessageType} from "../../utils/MessageTypeDetector.ts";
+import {ChatMessageFactory} from "../../utils/ChatMassageFacatory.tsx";
 
 
 interface Props {
     messages: ChatMessage[];
+    showSender?: boolean;
 }
 
-const MessageList = ({ messages }: Props) => {
+const MessageList = ({messages, showSender = false}: Props) => {
     const bottomRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -22,19 +21,7 @@ const MessageList = ({ messages }: Props) => {
 
     return (
         <main className="chat-message-list flex-grow-1 overflow-auto">
-
             <div className="chat-message-content-area">
-
-                <div className="chat-start-info text-center">
-                    <div className="chat-user-avatar chat-user-avatar-large mx-auto mb-2">
-                        H
-                    </div>
-
-                    <h6 className="fw-semibold mb-1">
-
-                    </h6>
-
-                </div>
 
                 <div className="d-flex flex-column gap-3">
                     {messages.map((message, index) => {
@@ -47,19 +34,21 @@ const MessageList = ({ messages }: Props) => {
 
                         const type = getChatMessageType(message.content);
 
-                        return(
-                            <ChatMessageFactory
-                                type={type}
-                                       chatMessage={message}
-                                                showDateSeparator={showDateSeparator} />
+                        return (
+                            <div key={message.id}>
+                                <ChatMessageFactory
+                                    type={type}
+                                    chatMessage={message}
+                                    showDateSeparator={showDateSeparator}
+                                    showSender={showSender}
+                                />
+                            </div>
                         );
                     })}
                 </div>
 
-                <div ref={bottomRef} />
-
+                <div ref={bottomRef}/>
             </div>
-
         </main>
     );
 };
