@@ -35,7 +35,7 @@ export function ConfirmationJoinRoom() {
         try {
             const room = await dispatch(joinRoomThunk(roomName)).unwrap();
             setSuccess(`Tham gia phòng "${room.name}" thành công!`);
-            setTimeout(() => navigate("/room"), 1000);
+            setTimeout(() => navigate(`/chat/room/${room.name}`), 1000);
         } catch (err) {
             setError(
                 typeof err === "string"
