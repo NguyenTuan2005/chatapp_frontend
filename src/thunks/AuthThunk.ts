@@ -55,3 +55,15 @@ export const checkUserExistThunk = createAsyncThunk<
         return rejectWithValue(error instanceof Error ? error.message : "check user exist failed");
     }
 });
+
+export const logoutThunk = createAsyncThunk<
+    string,
+    void,
+    { rejectValue: string }
+>("auth/logout", async (_, {rejectWithValue}) => {
+    try {
+        return await AuthService.logout();
+    } catch (error) {
+        return rejectWithValue(error instanceof Error ? error.message : "logout failed");
+    }
+});
