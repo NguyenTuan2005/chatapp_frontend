@@ -11,30 +11,30 @@ import {
 } from "react-bootstrap-icons";
 import { Link, useNavigate } from "react-router";
 import { registerThunk } from "../thunks/AuthThunk.ts";
-import { useAppDispatch } from "../store/Store.ts";
+import { useAppDispatch, useAppSelector } from "../store/Store.ts";
+
+const USERNAME_PATTERN = /^\w+$/;
 
 function Register() {
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
     const [showPass, setShowPass] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [submitted, setSubmitted] = useState(false);
+    const { error, loading } = useAppSelector((state) => state.auth);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
+    const userValid = USERNAME_PATTERN.test(user);
+    const userInvalid = (submitted || user.length > 0) && !userValid;
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (loading) return;
+        setSubmitted(true);
+        if (!userValid || loading) return;
 
-        setError(null);
-        setLoading(true);
         const result = await dispatch(registerThunk({ user, pass }));
-        setLoading(false);
-
         if (registerThunk.fulfilled.match(result)) {
             navigate("/login", { replace: true });
-        } else {
-            setError(typeof result.payload === "string" ? result.payload : "Register failed");
         }
     };
 
@@ -53,7 +53,7 @@ function Register() {
                             <Form onSubmit={handleSubmit} noValidate>
                                 <Form.Group className="mb-3" controlId="registerUser">
                                     <Form.Label>Tên người dùng</Form.Label>
-                                    <InputGroup>
+                                    <InputGroup hasValidation>
                                         <InputGroup.Text>
                                             <PersonFill />
                                         </InputGroup.Text>
@@ -62,8 +62,12 @@ function Register() {
                                             placeholder="Điền tên người dùng"
                                             autoComplete="username"
                                             value={user}
+                                            isInvalid={userInvalid}
                                             onChange={(e) => setUser(e.target.value)}
                                         />
+                                        <Form.Control.Feedback type="invalid">
+                                            Chỉ được dùng chữ cái, số và dấu gạch dưới (_)
+                                        </Form.Control.Feedback>
                                     </InputGroup>
                                 </Form.Group>
 

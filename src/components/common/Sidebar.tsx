@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Alert, ListGroup, Badge, Placeholder, Button, Modal} from "react-bootstrap";
+import {Alert, ListGroup, Badge, Placeholder, Button, Modal, OverlayTrigger, Tooltip} from "react-bootstrap";
 import {
     ExclamationCircleFill,
     PeopleFill,
@@ -7,9 +7,12 @@ import {
     ChatDots,
     CircleFill,
     BoxArrowRight,
+    ChevronDoubleLeft,
+    ChevronDoubleRight,
 } from "react-bootstrap-icons";
 import { useAppDispatch, useAppSelector } from "../../store/Store.ts";
 import {checkUserOnlineThunk, getUserListThunk} from "../../thunks/SidebarThunk.ts";
+import {toggleSidebar} from "../../store/slice/SidebarSlice.ts";
 import type {UserSidebar} from "../../types/SiderbarData.ts";
 import {getRoomChatMesThunk} from "../../thunks/RoomManagementThunk.ts";
 import {AvatarChatImage} from "./AvatarChatImage.tsx";
@@ -21,6 +24,9 @@ import {useNavigate} from "react-router";
 import SearchUser from "./SearchUser.tsx";
 import "../../styles/sidebar.css";
 
+const EXPANDED_WIDTH = 300;
+const COLLAPSED_WIDTH = 72;
+
 const formatTime = (value: string) => {
     const d = new Date(value.replace(" ", "T"));
     return d.toDateString() === new Date().toDateString()
@@ -28,15 +34,19 @@ const formatTime = (value: string) => {
         : d.toLocaleDateString("vi-VN");
 };
 
-const SkeletonItem = () => (
-    <ListGroup.Item className="d-flex align-items-center py-3">
-        <Placeholder animation="glow" className="me-3">
+const SkeletonItem = ({ collapsed }: { collapsed: boolean }) => (
+    <ListGroup.Item
+        className={`d-flex align-items-center py-3 ${collapsed ? "justify-content-center px-0" : ""}`}
+    >
+        <Placeholder animation="glow" className={collapsed ? "" : "me-3"}>
             <Placeholder className="rounded-circle d-block" style={{ width: 44, height: 44 }} />
         </Placeholder>
-        <Placeholder animation="glow" className="flex-grow-1">
-            <Placeholder xs={7} className="d-block mb-2" />
-            <Placeholder xs={3} />
-        </Placeholder>
+        {!collapsed && (
+            <Placeholder animation="glow" className="flex-grow-1">
+                <Placeholder xs={7} className="d-block mb-2" />
+                <Placeholder xs={3} />
+            </Placeholder>
+        )}
     </ListGroup.Item>
 );
 
@@ -46,6 +56,7 @@ function Sidebar() {
     const error = useAppSelector((state) => state.sidebar.error);
     const loading = useAppSelector((state) => state.sidebar.loading);
     const isOnline = useAppSelector((state) => state.sidebar.isOnline);
+    const collapsed = useAppSelector((state) => state.sidebar.collapsed);
     const currentUser = reLoginStorage.get(USER_KEY);
 
     const navigate = useNavigate();
@@ -137,27 +148,50 @@ function Sidebar() {
         }
     };
 
+    const width = collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH;
+    const statusText = isOnline ? "Trực tiếp" : "Mất kết nối";
+
     // @ts-ignore
     return (
         <aside
-            className="d-flex flex-column border-end bg-body vh-100"
-            style={{ width: 300, minWidth: 300 }}
+            className="d-flex flex-column border-end bg-body vh-100 overflow-hidden"
+            style={{ width, minWidth: width, transition: "width 0.2s ease, min-width 0.2s ease" }}
         >
-            <header className="d-flex align-items-center px-3 py-3 border-bottom flex-shrink-0">
-                <ChatDots size={22} className="text-primary me-2" />
-                <h5 className="mb-0 fw-semibold">Cuộc trò chuyện</h5>
+            <header
+                className={`d-flex align-items-center py-3 border-bottom flex-shrink-0 ${
+                    collapsed ? "justify-content-center px-2" : "px-3"
+                }`}
+            >
+                {!collapsed && (
+                    <>
+                        <ChatDots size={22} className="text-primary me-2" />
+                        <h5 className="mb-0 fw-semibold text-truncate">Cuộc trò chuyện</h5>
+                    </>
+                )}
+                <Button
+                    variant="light"
+                    size="sm"
+                    className={`d-inline-flex align-items-center ${collapsed ? "" : "ms-auto"}`}
+                    onClick={() => dispatch(toggleSidebar())}
+                    aria-label={collapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
+                    aria-expanded={!collapsed}
+                >
+                    {collapsed ? <ChevronDoubleRight /> : <ChevronDoubleLeft />}
+                </Button>
             </header>
 
-            <div
-                className="d-flex px-3 py-2"
-                style={{
-                    gap: "1px",
-                }}
-            >
-                <SearchUser onSearch={checkUserExist} />
-                <CreateRoom />
-                <JoinRoom />
-            </div>
+            {!collapsed && (
+                <div
+                    className="d-flex px-3 py-2"
+                    style={{
+                        gap: "1px",
+                    }}
+                >
+                    <SearchUser onSearch={checkUserExist} />
+                    <CreateRoom />
+                    <JoinRoom />
+                </div>
+            )}
 
             <div
                 className="flex-grow-1 overflow-auto hide-scrollbar"
@@ -166,38 +200,65 @@ function Sidebar() {
                 {loading ? (
                     <ListGroup variant="flush">
                         {Array.from({ length: 6 }, (_, i) => (
-                            <SkeletonItem key={i} />
+                            <SkeletonItem key={i} collapsed={collapsed} />
                         ))}
                     </ListGroup>
                 ) : items.length === 0 ? (
-                    <p className="text-muted text-center small mt-4 px-3">
-                        Chưa có cuộc trò chuyện nào hết, hãy tạo phòng hoặc tạo cuộc trò chuyện
-                    </p>
+                    !collapsed && (
+                        <p className="text-muted text-center small mt-4 px-3">
+                            Chưa có cuộc trò chuyện nào hết, hãy tạo phòng hoặc tạo cuộc trò chuyện
+                        </p>
+                    )
                 ) : (
                     <ListGroup variant="flush">
                         {items.map((item) => {
                             const isRoom = item.type === 1;
                             const Icon = isRoom ? PeopleFill : PersonCircle;
+                            const itemKey = `${item.type}-${item.name}`;
+
+                            const avatar = (
+                                <div
+                                    className={`rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 ${
+                                        collapsed ? "" : "me-3"
+                                    } ${
+                                        isRoom
+                                            ? "bg-primary-subtle text-primary"
+                                            : "bg-success-subtle text-success"
+                                    }`}
+                                    style={{ width: 44, height: 44 }}
+                                >
+                                    <AvatarChatImage name={item.name}>
+                                        <Icon size={22} />
+                                    </AvatarChatImage>
+                                </div>
+                            );
+
+                            if (collapsed) {
+                                return (
+                                    <OverlayTrigger
+                                        key={itemKey}
+                                        placement="right"
+                                        overlay={<Tooltip id={`tooltip-${itemKey}`}>{item.name}</Tooltip>}
+                                    >
+                                        <ListGroup.Item
+                                            action
+                                            className="d-flex align-items-center justify-content-center py-3 px-0"
+                                            onClick={() => openChat(item)}
+                                        >
+                                            {avatar}
+                                        </ListGroup.Item>
+                                    </OverlayTrigger>
+                                );
+                            }
 
                             return (
                                 <ListGroup.Item
-                                    key={`${item.type}-${item.name}`}
+                                    key={itemKey}
                                     action
                                     className="d-flex align-items-center py-3"
                                     onClick={() => openChat(item)}
                                 >
-                                    <div
-                                        className={`rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0 ${
-                                            isRoom
-                                                ? "bg-primary-subtle text-primary"
-                                                : "bg-success-subtle text-success"
-                                        }`}
-                                        style={{ width: 44, height: 44 }}
-                                    >
-                                        <AvatarChatImage name={item.name}>
-                                            <Icon size={22} />
-                                        </AvatarChatImage>
-                                    </div>
+                                    {avatar}
 
                                     <div className="flex-grow-1 overflow-hidden">
                                         <div className="d-flex justify-content-between align-items-baseline">
@@ -223,26 +284,54 @@ function Sidebar() {
                 )}
             </div>
 
-            <div className="flex-shrink-0 border-top px-3 py-2 d-flex align-items-center justify-content-between">
-                <Badge
-                    pill
-                    bg={isOnline ? "success" : "secondary"}
-                    className="d-inline-flex align-items-center fw-normal px-2 py-2"
-                >
-                    <CircleFill size={8} className="me-1" />
-                    {isOnline ? "Trực tiếp" : "Mất kết nối"}
-                </Badge>
+            {collapsed ? (
+                <div className="flex-shrink-0 border-top px-2 py-2 d-flex flex-column align-items-center gap-2">
+                    <OverlayTrigger
+                        placement="right"
+                        overlay={<Tooltip id="tooltip-status">{statusText}</Tooltip>}
+                    >
+                        <span className={`d-inline-flex ${isOnline ? "text-success" : "text-secondary"}`}>
+                            <CircleFill size={12} />
+                        </span>
+                    </OverlayTrigger>
 
-                <Button
-                    variant="outline-danger"
-                    size="sm"
-                    className="d-inline-flex align-items-center"
-                    onClick={() => setShowLogoutModal(true)}
-                >
-                    <BoxArrowRight className="me-1" />
-                    Đăng xuất
-                </Button>
-            </div>
+                    <OverlayTrigger
+                        placement="right"
+                        overlay={<Tooltip id="tooltip-logout">Đăng xuất</Tooltip>}
+                    >
+                        <Button
+                            variant="outline-danger"
+                            size="sm"
+                            className="d-inline-flex align-items-center"
+                            onClick={() => setShowLogoutModal(true)}
+                            aria-label="Đăng xuất"
+                        >
+                            <BoxArrowRight />
+                        </Button>
+                    </OverlayTrigger>
+                </div>
+            ) : (
+                <div className="flex-shrink-0 border-top px-3 py-2 d-flex align-items-center justify-content-between">
+                    <Badge
+                        pill
+                        bg={isOnline ? "success" : "secondary"}
+                        className="d-inline-flex align-items-center fw-normal px-2 py-2"
+                    >
+                        <CircleFill size={8} className="me-1" />
+                        {statusText}
+                    </Badge>
+
+                    <Button
+                        variant="outline-danger"
+                        size="sm"
+                        className="d-inline-flex align-items-center"
+                        onClick={() => setShowLogoutModal(true)}
+                    >
+                        <BoxArrowRight className="me-1" />
+                        Đăng xuất
+                    </Button>
+                </div>
+            )}
 
             <Modal
                 show={showLogoutModal}

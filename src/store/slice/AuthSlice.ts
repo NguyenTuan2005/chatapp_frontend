@@ -61,11 +61,10 @@ const authSlice = createSlice({
                 state.isAuthenticated = true;
                 state.reLoginCode = action.payload;
             })
-            .addCase(reloginThunk.rejected, (state, action) => {
+            .addCase(reloginThunk.rejected, (state) => {
                 state.relogin = false;
                 state.isAuthenticated = false;
                 state.reLoginCode = null;
-                state.error = action.payload ?? "Relogin failed";
             });
         builder
             .addCase(checkUserExistThunk.pending, (state) => {

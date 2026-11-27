@@ -272,3 +272,8 @@ a:hover {
     0%   { background-position: 200% 0; }
     100% { background-position: -200% 0; }
 }
+
+html, body, #root {
+    height: 100%;
+    overflow: hidden;
+}
