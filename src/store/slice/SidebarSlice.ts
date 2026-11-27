@@ -43,8 +43,8 @@ const sidebarSlice = createSlice({
             .addCase(checkUserOnlineThunk.fulfilled, (state, action) => {
                 state.isOnline = action.payload;
             })
-            .addCase(checkUserOnlineThunk.rejected, (state, action) => {
-                state.error = action.payload ?? "get user list failed";
+            .addCase(checkUserOnlineThunk.rejected, (state) => {
+                state.isOnline = false;
             });
     },
 })

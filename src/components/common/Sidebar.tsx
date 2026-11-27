@@ -62,7 +62,7 @@ function Sidebar() {
 
         const poll = async () => {
             await dispatch(checkUserOnlineThunk(currentUser)).catch(() => {});
-            if (!stopped) timer = setTimeout(poll, 40000);
+            if (!stopped) timer = setTimeout(poll, 20000);
         };
 
         poll();
