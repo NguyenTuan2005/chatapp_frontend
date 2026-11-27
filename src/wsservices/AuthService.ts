@@ -34,5 +34,12 @@ export const AuthService = {
             { user }
         );
         return data.status;
+    },
+    async logout(): Promise<string> {
+        const data = await websocketService.request<string, {}>(
+            WS_EVENTS.LOGOUT,
+            {}
+        );
+        return data;
     }
 };

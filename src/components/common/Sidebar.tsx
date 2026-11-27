@@ -1,10 +1,12 @@
 import {useEffect, useState} from "react";
-import {Alert, ListGroup, Badge, Placeholder} from "react-bootstrap";
+import {Alert, ListGroup, Badge, Placeholder, Button, Modal} from "react-bootstrap";
 import {
     ExclamationCircleFill,
     PeopleFill,
     PersonCircle,
     ChatDots,
+    CircleFill,
+    BoxArrowRight,
 } from "react-bootstrap-icons";
 import { useAppDispatch, useAppSelector } from "../../store/Store.ts";
 import {checkUserOnlineThunk, getUserListThunk} from "../../thunks/SidebarThunk.ts";
@@ -13,7 +15,7 @@ import {getRoomChatMesThunk} from "../../thunks/RoomManagementThunk.ts";
 import {AvatarChatImage} from "./AvatarChatImage.tsx";
 import CreateRoom from "../room/CreateRoom.tsx";
 import JoinRoom from "../room/JoinRoom.tsx";
-import {checkUserExistThunk, reLoginStorage} from "../../thunks/AuthThunk.ts";
+import {checkUserExistThunk, logoutThunk, reLoginStorage} from "../../thunks/AuthThunk.ts";
 import {USER_KEY} from "../../config/WSEventsEnum.ts";
 import {useNavigate} from "react-router";
 import SearchUser from "./SearchUser.tsx";
@@ -72,6 +74,8 @@ function Sidebar() {
     }, [dispatch, currentUser]);
 
     const [searchedUser, setSearchedUser] = useState<string | null>(null);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [loggingOut, setLoggingOut] = useState(false);
 
     const checkUserExist = async (username: string) => {
         try {
@@ -83,6 +87,17 @@ function Sidebar() {
             return Boolean(exists);
         } catch {
             return false;
+        }
+    };
+
+    const handleConfirmLogout = async () => {
+        setLoggingOut(true);
+        try {
+            await dispatch(logoutThunk()).unwrap();
+        } catch {
+        } finally {
+            setLoggingOut(false);
+            setShowLogoutModal(false);
         }
     };
 
@@ -133,8 +148,6 @@ function Sidebar() {
                 <h5 className="mb-0 fw-semibold">Cuộc trò chuyện</h5>
             </header>
 
-            {/* Pinned: always visible, never scrolls */}
-
             <div
                 className="d-flex px-3 py-2"
                 style={{
@@ -146,7 +159,6 @@ function Sidebar() {
                 <JoinRoom />
             </div>
 
-            {/* Only this part scrolls */}
             <div
                 className="flex-grow-1 overflow-auto hide-scrollbar"
                 style={{ minHeight: 0 }}
@@ -211,9 +223,54 @@ function Sidebar() {
                 )}
             </div>
 
-            <div className="flex-shrink-0 border-top px-3 py-2">
-                {isOnline ? "Online" : "Offline"}
+            <div className="flex-shrink-0 border-top px-3 py-2 d-flex align-items-center justify-content-between">
+                <Badge
+                    pill
+                    bg={isOnline ? "success" : "secondary"}
+                    className="d-inline-flex align-items-center fw-normal px-2 py-2"
+                >
+                    <CircleFill size={8} className="me-1" />
+                    {isOnline ? "Trực tiếp" : "Mất kết nối"}
+                </Badge>
+
+                <Button
+                    variant="outline-danger"
+                    size="sm"
+                    className="d-inline-flex align-items-center"
+                    onClick={() => setShowLogoutModal(true)}
+                >
+                    <BoxArrowRight className="me-1" />
+                    Đăng xuất
+                </Button>
             </div>
+
+            <Modal
+                show={showLogoutModal}
+                onHide={() => !loggingOut && setShowLogoutModal(false)}
+                centered
+                backdrop="static"
+            >
+                <Modal.Header closeButton={!loggingOut}>
+                    <Modal.Title className="fs-5">Xác nhận đăng xuất</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Bạn có chắc chắn muốn đăng xuất không?</Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        variant="secondary"
+                        onClick={() => setShowLogoutModal(false)}
+                        disabled={loggingOut}
+                    >
+                        Hủy
+                    </Button>
+                    <Button
+                        variant="danger"
+                        onClick={handleConfirmLogout}
+                        disabled={loggingOut}
+                    >
+                        {loggingOut ? "Đang đăng xuất..." : "Đăng xuất"}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </aside>
     );
 }
