@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@giphy/js-fetch-api": "^5.8.0",
+    "@giphy/react-components": "^10.2.0",
     "@reduxjs/toolkit": "^2.13.0",
     "@stomp/stompjs": "^7.5.0",
     "@tiptap/pm": "^3.34.0",

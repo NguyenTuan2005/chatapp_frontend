@@ -134,14 +134,14 @@ function Sidebar() {
             </header>
 
             {/* Pinned: always visible, never scrolls */}
-            <SearchUser onSearch={checkUserExist} />
+
             <div
                 className="d-flex px-3 py-2"
                 style={{
                     gap: "1px",
                 }}
             >
-
+                <SearchUser onSearch={checkUserExist} />
                 <CreateRoom />
                 <JoinRoom />
             </div>
