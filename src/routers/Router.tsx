@@ -9,6 +9,7 @@ import {DefaultChat} from "../pages/DefaultChat.tsx";
 import {RoomConversation} from "../components/room/RoomConversation.tsx";
 import {ConfirmationJoinRoom} from "../pages/ConfirmationJoinRoom.tsx";
 import {OutRoomSuccess} from "../pages/OutRoomSuccess.tsx";
+import Register from "../pages/Register.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -37,7 +38,8 @@ export const router = createBrowserRouter([
     {
         element: <GuestRoute/>,
         children: [
-            { path: "/login", element: <Login/> }
+            { path: "/login", element: <Login/> },
+            { path: "/register", element: <Register/> }
         ]
     }
 ])
