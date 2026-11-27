@@ -258,10 +258,6 @@ export const JoinRoom = ({
                         !roomName.trim()
                     }
                     className="d-flex align-items-center gap-2 px-3"
-                    style={{
-                        backgroundColor: "#0068ff",
-                        borderColor: "#0068ff",
-                    }}
                 >
                     {isSubmitting ? (
                         <>
@@ -336,10 +332,6 @@ export const JoinRoom = ({
                             setInternalShow(true)
                         }
                         className="d-inline-flex align-items-center gap-2"
-                        style={{
-                            backgroundColor: "#0068ff",
-                            borderColor: "#0068ff",
-                        }}
                     >
                         <OverlayTrigger
                             placement="top"
@@ -351,7 +343,7 @@ export const JoinRoom = ({
                         >
                             <div className="d-flex align-items-center gap-1">
                                 <LogIn size={18} />
-                                <span>Join Room</span>
+                                <span></span>
                             </div>
                         </OverlayTrigger>
                     </Button>

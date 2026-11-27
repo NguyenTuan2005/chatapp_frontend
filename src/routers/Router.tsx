@@ -3,12 +3,12 @@ import NotFound from "../components/common/NotFound.tsx";
 import Login from "../pages/Login.tsx";
 import MainLayout from "../layouts/MainLayout.tsx";
 import {useAppSelector} from "../store/Store.ts";
-import Hehe from "../pages/Test.tsx";
 import AppSkeleton from "../components/common/AppSkeleton.tsx";
 import PeopleChatPage from "../pages/PeopleChatPage.tsx";
 import {DefaultChat} from "../pages/DefaultChat.tsx";
 import {RoomConversation} from "../components/room/RoomConversation.tsx";
 import {ConfirmationJoinRoom} from "../pages/ConfirmationJoinRoom.tsx";
+import {OutRoomSuccess} from "../pages/OutRoomSuccess.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -17,7 +17,6 @@ export const router = createBrowserRouter([
                 path: "*",
                 element: <NotFound/>
             },
-            {path: "/hehe", element: <Hehe/>}
         ]
     },
     {
@@ -28,7 +27,8 @@ export const router = createBrowserRouter([
                 children: [
                     { path: "/", element: <DefaultChat/>},
                     {path : "/chat/room/:roomName", element: <RoomConversation/>},
-                    {path : "/join-room/confirmation/:roomName", element: <ConfirmationJoinRoom/>},
+                    {path : "/chat/room/out-room-success/:roomName", element: <OutRoomSuccess/>},
+                    {path : "/join-room/confirmation/:roomName", element: <ConfirmationJoinRoom isRejoin={false}/>},
                     {path: "/chat/people/:username", element: <PeopleChatPage/>}
                 ]
             }

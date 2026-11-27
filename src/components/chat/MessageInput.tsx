@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import {GifPickerButton} from "../custom_message/GifPickerButton.tsx";
 
 export interface MessageInputProps {
     onSend: (content: string) => void;
@@ -46,6 +47,8 @@ const MessageInput = ({ onSend }: MessageInputProps) => {
                 <button className="btn btn-link chat-toolbar-btn" title="Đính kèm">
                     <i className="bi bi-paperclip"></i>
                 </button>
+
+                <GifPickerButton onSelect={onSend} />
             </div>
 
             <div className="chat-input-main d-flex align-items-end gap-2 px-3 pb-3">

@@ -7,6 +7,7 @@ import {getRoomNameFromUrl} from "../utils/joinRoomLink.ts";
 import {getRoomAvatarUrl} from "../components/common/RoomChatImage.tsx";
 import {TextMessage} from "../components/custom_message/TextMessage.tsx";
 import {HtmlMessage} from "../components/custom_message/HtmlMessage.tsx";
+import {GifMessage} from "../components/custom_message/GifMessage.tsx";
 
 export interface ChatMessageFactoryProps {
     type: ChatMessageType;
@@ -51,6 +52,10 @@ export function ChatMessageFactory({
 
             return <span style={{fontSize: 32}}>{chatMessage.content}</span>;
 
+        }
+
+        case  ChatMessageType.GIF :{
+            return <GifMessage message={chatMessage}/>
         }
 
         case ChatMessageType.IMAGE: {

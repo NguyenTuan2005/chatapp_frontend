@@ -148,7 +148,12 @@ function Sidebar() {
                 <h5 className="mb-0 fw-semibold">Cuộc trò chuyện</h5>
             </header>
 
-            <div className="flex-shrink-0">
+            <div
+                className="d-flex px-3 py-2"
+                style={{
+                    gap: "1px",
+                }}
+            >
                 <SearchUser onSearch={checkUserExist} />
                 <CreateRoom />
                 <JoinRoom />
