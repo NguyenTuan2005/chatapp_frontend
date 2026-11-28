@@ -16,6 +16,9 @@ export interface RoomManagementState {
     loading: boolean;
     sendingMessage: boolean;
     error: string | null;
+    currentPage: number;
+    hasMoreMessages: boolean;
+    loadingMoreMessages: boolean;
 }
 
 const initialState: RoomManagementState = {
@@ -25,6 +28,9 @@ const initialState: RoomManagementState = {
     loading: false,
     sendingMessage: false,
     error: null,
+    currentPage: 1,
+    hasMoreMessages: true,
+    loadingMoreMessages: false,
 };
 
 const roomManagementSlice = createSlice({
@@ -68,6 +74,9 @@ const roomManagementSlice = createSlice({
             state.loading = false;
             state.sendingMessage = false;
             state.error = null;
+            state.currentPage = 1;
+            state.hasMoreMessages = true;
+            state.loadingMoreMessages = false;
         },
     },
 
@@ -129,22 +138,56 @@ const roomManagementSlice = createSlice({
             });
 
         builder
-            .addCase(getRoomChatMesThunk.pending, (state) => {
-                state.loading = true;
+            .addCase(getRoomChatMesThunk.pending, (state, action) => {
+                const page = action.meta.arg.page ?? 1;
+
+                if (page === 1) {
+                    state.loading = true;
+                    state.currentPage = 1;
+                    state.hasMoreMessages = true;
+                } else {
+                    state.loadingMoreMessages = true;
+                }
+
                 state.error = null;
             })
             .addCase(getRoomChatMesThunk.fulfilled, (state, action) => {
+                const page = action.meta.arg.page ?? 1;
+                const newRoom = action.payload;
+
                 state.loading = false;
-                state.currentRoom = action.payload;
-                const roomIndex = state.rooms.findIndex((r) => r.name === action.payload.name);
-                if (roomIndex >= 0) {
-                    state.rooms[roomIndex] = action.payload;
+                state.loadingMoreMessages = false;
+
+                if (page === 1) {
+                    state.currentRoom = newRoom;
                 } else {
-                    state.rooms.push(action.payload);
+                    if (state.currentRoom?.name !== newRoom.name) {
+                        return;
+                    }
+
+                    state.currentRoom.chatData = [
+                        ...newRoom.chatData,
+                        ...state.currentRoom.chatData
+                    ];
                 }
+
+                const roomIndex = state.rooms.findIndex(
+                    room => room.name === newRoom.name
+                );
+
+                if (roomIndex >= 0) {
+                    state.rooms[roomIndex] = state.currentRoom!;
+                } else {
+                    state.rooms.push(state.currentRoom!);
+                }
+
+                state.currentPage = page;
+
+                state.hasMoreMessages = newRoom.chatData.length === 50;
             })
             .addCase(getRoomChatMesThunk.rejected, (state, action) => {
                 state.loading = false;
+                state.loadingMoreMessages = false;
                 state.error = action.payload ?? "Get room messages failed";
             });
 
