@@ -1,6 +1,6 @@
 import { websocketService } from "../config/Websocket.ts";
 import { WS_EVENTS } from "../config/WSEventsEnum.ts";
-import type {LoginRequest, ReLoginRequest} from "../types/AuthData.ts";
+import type {LoginRequest, RegisterRequest, ReLoginRequest} from "../types/AuthData.ts";
 
 interface LoginResponseData {
     RE_LOGIN_CODE: string;
@@ -34,5 +34,22 @@ export const AuthService = {
             { user }
         );
         return data.status;
+    },
+    async logout(): Promise<string> {
+        const data = await websocketService.request<string, {}>(
+            WS_EVENTS.LOGOUT,
+            {}
+        );
+        return data;
+    },
+    async register(credentials: RegisterRequest["data"]): Promise<string> {
+        await websocketService.connect();
+
+        const data = await websocketService.request<
+            string,
+            RegisterRequest["data"]
+        >(WS_EVENTS.REGISTER, credentials);
+
+        return data;
     }
 };

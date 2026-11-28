@@ -4,7 +4,7 @@ import {formatMessageTime} from "../../utils/DateUtils.ts";
 interface MessageRowProps {
     isMine: boolean;
     avatarText?: string;
-    createdAt: Date;
+    createdAt: string;
     children: ReactNode;
 }
 

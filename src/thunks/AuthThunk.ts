@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AuthService } from "../wsservices/AuthService.ts";
-import type {LoginRequest} from "../types/AuthData.ts";
+import type {LoginRequest, RegisterRequest} from "../types/AuthData.ts";
 import {KEY, USER_KEY} from "../config/WSEventsEnum.ts";
 
 export const reLoginStorage = {
@@ -53,5 +53,29 @@ export const checkUserExistThunk = createAsyncThunk<
         return await AuthService.checkUserExist(user);
     } catch (error) {
         return rejectWithValue(error instanceof Error ? error.message : "check user exist failed");
+    }
+});
+
+export const logoutThunk = createAsyncThunk<
+    string,
+    void,
+    { rejectValue: string }
+>("auth/logout", async (_, {rejectWithValue}) => {
+    try {
+        return await AuthService.logout();
+    } catch (error) {
+        return rejectWithValue(error instanceof Error ? error.message : "logout failed");
+    }
+});
+
+export const registerThunk = createAsyncThunk<
+    string,
+    RegisterRequest["data"],
+    { rejectValue: string }
+>("auth/register", async (credentials, { rejectWithValue }) => {
+    try {
+        return await AuthService.register(credentials);
+    } catch (error) {
+        return rejectWithValue(error instanceof Error ? error.message : "Register failed");
     }
 });

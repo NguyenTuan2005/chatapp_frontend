@@ -12,3 +12,10 @@ export interface ReLoginRequest {
         code: string;
     }
 }
+
+export interface RegisterRequest {
+    data: {
+        user: string;
+        pass: string;
+    }
+}

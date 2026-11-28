@@ -168,7 +168,6 @@ export const CreateRoom = ({
                     type="submit"
                     disabled={isSubmitting || !roomName.trim()}
                     className="d-flex align-items-center gap-2 px-3"
-                    style={{ backgroundColor: "#0068ff", borderColor: "#0068ff" }}
                 >
                     {isSubmitting ? (
                         <>
@@ -222,7 +221,6 @@ export const CreateRoom = ({
                     variant="primary"
                     onClick={() => setInternalShow(true)}
                     className="d-inline-flex align-items-center gap-2"
-                    style={{ backgroundColor: "#0068ff", borderColor: "#0068ff" }}
                 >
 
                     <OverlayTrigger
@@ -233,7 +231,7 @@ export const CreateRoom = ({
                             </Tooltip>
                         }
                     >
-                       <div><Plus></Plus>Room</div>
+                       <div><Plus></Plus></div>
                     </OverlayTrigger>
                 </Button>
             )}

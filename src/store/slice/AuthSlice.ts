@@ -1,5 +1,12 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {checkUserExistThunk, loginThunk, reLoginStorage, reloginThunk} from "../../thunks/AuthThunk.ts";
+import {
+    checkUserExistThunk,
+    loginThunk,
+    logoutThunk,
+    registerThunk,
+    reLoginStorage,
+    reloginThunk
+} from "../../thunks/AuthThunk.ts";
 import {KEY, USER_KEY} from "../../config/WSEventsEnum.ts";
 
 interface AuthState {
@@ -26,13 +33,6 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        logout(state) {
-            state.isAuthenticated = false;
-            state.reLoginCode = null;
-            state.error = null;
-            reLoginStorage.clear(KEY);
-            reLoginStorage.clear(USER_KEY);
-        },
     },
     extraReducers: (builder) => {
         builder
@@ -61,11 +61,10 @@ const authSlice = createSlice({
                 state.isAuthenticated = true;
                 state.reLoginCode = action.payload;
             })
-            .addCase(reloginThunk.rejected, (state, action) => {
+            .addCase(reloginThunk.rejected, (state) => {
                 state.relogin = false;
                 state.isAuthenticated = false;
                 state.reLoginCode = null;
-                state.error = action.payload ?? "Relogin failed";
             });
         builder
             .addCase(checkUserExistThunk.pending, (state) => {
@@ -82,8 +81,37 @@ const authSlice = createSlice({
                 state.isExist = false;
                 state.error = action.payload ?? "Check user failed";
             });
+        builder
+            .addCase(logoutThunk.pending, (state) => {
+                state.error = null;
+                state.loading = true;
+            })
+            .addCase(logoutThunk.fulfilled, (state) => {
+                state.isAuthenticated = false;
+                state.reLoginCode = null;
+                state.error = null;
+                state.loading = false;
+                reLoginStorage.clear(KEY);
+                reLoginStorage.clear(USER_KEY);
+            })
+            .addCase(logoutThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload ?? "Logout failed";
+            });
+        builder
+            .addCase(registerThunk.pending, (state) => {
+                state.error = null;
+                state.loading = true;
+            })
+            .addCase(registerThunk.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(registerThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload ?? "Register failed";
+            });
     },
 });
 
-export const { logout } = authSlice.actions;
+export const {} = authSlice.actions;
 export default authSlice.reducer;

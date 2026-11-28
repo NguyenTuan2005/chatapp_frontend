@@ -5,8 +5,12 @@ import {AlertCircle, CheckCircle2, LogIn, Users} from "lucide-react";
 import {joinRoomThunk} from "../thunks/RoomManagementThunk.ts";
 import {useAppDispatch} from "../store/Store.ts";
 
+export interface ConfirmationJoinRoomPros{
+    isRejoin : boolean
+}
 
-export function ConfirmationJoinRoom() {
+
+export function ConfirmationJoinRoom({ isRejoin = false}: ConfirmationJoinRoomPros) {
     const {roomName = ""} = useParams<{ roomName: string }>();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -35,7 +39,7 @@ export function ConfirmationJoinRoom() {
         try {
             const room = await dispatch(joinRoomThunk(roomName)).unwrap();
             setSuccess(`Tham gia phòng "${room.name}" thành công!`);
-            setTimeout(() => navigate("/room"), 1000);
+            setTimeout(() => navigate(`/chat/room/${room.name}`), 1000);
         } catch (err) {
             setError(
                 typeof err === "string"
@@ -51,16 +55,54 @@ export function ConfirmationJoinRoom() {
         <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light px-3">
             <Card className="shadow-sm border-0 text-center p-4" style={{maxWidth: 420, width: "100%"}}>
                 <Card.Body>
-                    <div
+                    {!isRejoin && <div
                         className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
                         style={{width: 64, height: 64, backgroundColor: "#EBF2F7"}}
                     >
                         <Users size={30} color="#0068ff"/>
                     </div>
+                    }
 
-                    <h5 className="fw-bold mb-1" style={{color: "#0F2942"}}>
-                        Bạn được mời tham gia phòng
-                    </h5>
+                    {!isRejoin &&
+                        <h5 className="fw-bold mb-1" style={{color: "#0F2942"}}>
+                            Bạn được mời tham gia phòng
+                        </h5>
+                    }
+
+                    {isRejoin && (
+                        <div className="text-center py-2">
+                            <div
+                                className="d-flex justify-content-center align-items-center mx-auto mb-3"
+                                style={{
+                                    width: "52px",
+                                    height: "52px",
+                                    borderRadius: "50%",
+                                    backgroundColor: "#E8F5EE",
+                                    color: "#198754",
+                                }}
+                            >
+                                <i className="bi bi-check-lg fs-4"></i>
+                            </div>
+
+                            <h5
+                                className="fw-bold mb-2"
+                                style={{ color: "#0F2942" }}
+                            >
+                                Rời phòng thành công!
+                            </h5>
+
+                            <p
+                                className="mb-0"
+                                style={{
+                                    color: "#6B7A8C",
+                                    fontSize: "15px",
+                                }}
+                            >
+                                Bạn có muốn quay lại phòng không?
+                            </p>
+                        </div>
+                    )}
+
                     <div className="fw-semibold text-primary fs-5 mb-3 text-break">
                         {roomName}
                     </div>

@@ -43,5 +43,6 @@ export enum ChatMessageType {
     TEXT = "TEXT",
     ICON = "ICON",
     IMAGE = "IMAGE",
-    HTML = "HTML"
+    HTML = "HTML",
+    GIF = "GIF"
 }
