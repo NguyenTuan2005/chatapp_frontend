@@ -29,6 +29,18 @@ export function RoomConversation() {
         state => state.roomManagement.error
     );
 
+    const currentPage = useAppSelector(
+        state => state.roomManagement.currentPage
+    );
+
+    const hasMoreMessages = useAppSelector(
+        state => state.roomManagement.hasMoreMessages
+    );
+
+    const loadingMoreMessages = useAppSelector(
+        state => state.roomManagement.loadingMoreMessages
+    );
+
     const currentUsername = reLoginStorage.get(USER_KEY) ?? "";
 
     const { roomName } = useParams<{ roomName: string }>();
@@ -118,6 +130,17 @@ export function RoomConversation() {
         }));
     }
 
+    const handleLoadMoreMessages = () => {
+        if (!isRoomMatched || loadingMoreMessages || !hasMoreMessages) {
+            return;
+        }
+
+        dispatch(getRoomChatMesThunk({
+            name: currentRoomName,
+            page: currentPage + 1
+        }));
+    };
+
     return (
         <div className="d-flex w-100 vh-100 overflow-hidden bg-light">
 
@@ -136,7 +159,15 @@ export function RoomConversation() {
                         {error}
                     </div>
                 ) : (
-                    <MessageList messages={messages} showSender={true}/>
+
+                    <MessageList
+                        key={currentRoomName}
+                        messages={messages}
+                        showSender={true}
+                        hasMoreMessages={hasMoreMessages}
+                        loadingMoreMessages={loadingMoreMessages}
+                        onLoadMore={handleLoadMoreMessages}
+                    />
                 )}
 
                 <MessageInput onSend={handleSendMessage} />

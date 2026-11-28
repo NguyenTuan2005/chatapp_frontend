@@ -77,7 +77,7 @@ function Sidebar() {
             const exists = await dispatch(checkUserExistThunk(username)).unwrap();
             if (exists) {
                 setSearchedUser(username);
-                navigate(`/chat/${username}`);
+                navigate(`/chat/people/${username}`);
             }
             return Boolean(exists);
         } catch {
@@ -102,7 +102,7 @@ function Sidebar() {
             : sorted;
 
     const openChat = (userSidebar: UserSidebar) => {
-        const conversationName = userSidebar.name;
+        const conversationName = encodeURIComponent(userSidebar.name);
 
         switch (userSidebar.type) {
             case 1 : {
